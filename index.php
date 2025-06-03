@@ -1,18 +1,21 @@
-
-<?php require "./includes/header.php";?>
+<?php require "./includes/header.php";
+$form_no = 'S.No.' . time(); ?>
 <div class="header">
   <div class="container">
     <div class="text-center">
       <h2><i class="fas fa-graduation-cap"></i> Sri Guru Nanak Girls PG College</h2>
       <p>Affiliated to Maharaja Ganga Singh University, Bikaner (Raj.)</p>
-      <h4>Admission Form Session: 20__ - 20__</h4>
+      <h4>Admission Form <strong><?php echo $form_no; ?></strong>
+      </h4>
     </div>
   </div>
 </div>
 
 <div class="container">
   <div class="form-container">
-    <form>
+    <form id="admission_form" method="POST">
+          <input type="hidden" name="form_no" value="<?php echo $form_no; ?>">
+        
       <!-- Progress Indicator -->
       <div class="d-none d-md-block mb-4">
         <div class="progress">
@@ -62,6 +65,10 @@
               <input class="form-check-input" type="radio" name="faculty" value="Commerce" id="commerce">
               <label class="form-check-label" for="commerce">Commerce</label>
             </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="faculty" value="Computer" id="computer">
+              <label class="form-check-label" for="computer">Computer</label>
+            </div>
           </div>
         </div>
       </div>
@@ -74,11 +81,11 @@
         <div class="row g-3">
           <div class="col-md-6">
             <label class="form-label required-field">Name of Applicant (in English)</label>
-            <input type="text" class="form-control" placeholder="Full Name" required>
+            <input type="text" class="form-control" placeholder="Full Name" required name="applicant_name">
           </div>
           <div class="col-md-6">
             <label class="form-label">Name of Applicant (in Hindi)</label>
-            <input type="text" class="form-control" placeholder="पूरा नाम">
+            <input type="text" class="form-control" placeholder="">
           </div>
           <div class="col-md-6">
             <label class="form-label required-field">Father's Name</label>
@@ -96,11 +103,13 @@
             <label class="form-label">Mother's Occupation</label>
             <input type="text" class="form-control" placeholder="Occupation">
           </div>
-          <div class="col-md-4">
+      <div class="col-6">
+<div class="row">
+              <div class="col-6">
             <label class="form-label required-field">Date of Birth</label>
             <input type="date" class="form-control" required>
           </div>
-          <div class="col-md-4">
+           <div class="col-6">
             <label class="form-label required-field">Category</label>
             <select class="form-select" required>
               <option value="" selected disabled>Select Category</option>
@@ -111,15 +120,14 @@
               <option>Other</option>
             </select>
           </div>
-          <div class="col-md-4">
-            <label class="form-label required-field">Previous Marks %</label>
-            <input type="number" class="form-control" placeholder="Percentage" min="0" max="100" required>
-          </div>
-          <div class="col-md-6">
+         
+          <div class="col-12">
             <label class="form-label required-field">Aadhar Number</label>
             <input type="text" class="form-control" placeholder="12-digit Aadhar" pattern="[0-9]{12}" required>
           </div>
-          <div class="col-md-6">
+</div>
+      </div>
+       <div class="col-md-6">
             <label class="form-label required-field">Upload Photo</label>
             <div class="file-upload">
               <div class="file-upload-btn">
@@ -129,7 +137,9 @@
                 <input type="file" class="file-upload-input" accept="image/*" required>
               </div>
             </div>
-          </div>
+          </div> <div class="col-6">
+
+      </div>
         </div>
       </div>
 
@@ -322,11 +332,11 @@
         <button type="button" class="btn btn-outline-secondary">
           <i class="fas fa-arrow-left"></i> Back
         </button>
-        <button type="submit" class="btn btn-primary">
+        <button type="button" id="submit" class="btn btn-primary">
           Submit Form <i class="fas fa-arrow-right"></i>
         </button>
       </div>
     </form>
   </div>
 </div>
-<?php require'./includes/footer.php';?>
+<?php require './includes/footer.php'; ?>

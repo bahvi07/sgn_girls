@@ -4,6 +4,7 @@
       --accent-color: #3498db;
       --light-bg: #f8f9fa;
       --dark-text: #2c3e50;
+      --main-color:#0d5ef4;
     }
     
     body {
@@ -13,7 +14,7 @@
     }
     
     .header {
-      background: linear-gradient(135deg, var(--primary-color), #9b59b6);
+      background: linear-gradient( #0d5ef4);
       color: white;
       padding: 2rem 0;
       margin-bottom: 2rem;
@@ -88,7 +89,7 @@
     }
     
     .btn-primary {
-      background-color: var(--primary-color);
+      background-color: var(--main-color);
       border: none;
       padding: 12px 30px;
       font-weight: 600;
@@ -116,7 +117,7 @@
     }
     
     .form-check-input:checked {
-      background-color: var(--primary-color);
+      background-color: var(--main-color);
       border-color: var(--primary-color);
     }
     
