@@ -11,16 +11,16 @@ $form_no = 'S.No.' . time(); ?>
   </div>
 </div>
 
-<div class="container">
+<div class="container p-0">
   <div class="form-container">
     <form id="admission_form" method="POST">
           <input type="hidden" name="form_no" value="<?php echo $form_no; ?>">
         
       <!-- Progress Indicator -->
       <div class="d-none d-md-block mb-4">
-        <div class="progress">
-          <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-        </div>
+       <div class="progress">
+  <div class="progress-bar" role="progressbar"  aria-valuenow="" aria-valuemin="0" aria-valuemax="100"></div>
+</div>
         <div class="d-flex justify-content-between mt-2">
           <small>Personal Details</small>
           <small>Education</small>
@@ -37,18 +37,18 @@ $form_no = 'S.No.' . time(); ?>
         <div class="row g-3">
           <div class="col-md-3">
             <label class="form-label required-field">Class</label>
-            <input type="text" class="form-control" placeholder="e.g. B.A. I" required>
+            <input type="text" class="form-control" placeholder="e.g. B.A. I" required name="class">
           </div>
           <div class="col-md-3">
             <label class="form-label">Part</label>
-            <input type="text" class="form-control" placeholder="Part I/II">
+            <input type="text" class="form-control" placeholder="Part I/II" name="part">
           </div>
           <div class="col-md-3">
             <label class="form-label required-field">Medium</label>
-            <select class="form-select" required>
+            <select class="form-select" required name="medium">
               <option value="" selected disabled>Select Medium</option>
-              <option>English</option>
-              <option>Hindi</option>
+              <option value="English">English</option>
+              <option value="Hindi">Hindi</option>
             </select>
           </div>
           <div class="col-md-3">
@@ -85,33 +85,35 @@ $form_no = 'S.No.' . time(); ?>
           </div>
           <div class="col-md-6">
             <label class="form-label">Name of Applicant (in Hindi)</label>
-            <input type="text" class="form-control" placeholder="">
+            <input type="text" class="form-control" placeholder="" name="hindi_name">
           </div>
           <div class="col-md-6">
             <label class="form-label required-field">Father's Name</label>
-            <input type="text" class="form-control" placeholder="Father's Name" required>
+            <input type="text" class="form-control" placeholder="Father's Name" required name="father_name">
           </div>
           <div class="col-md-6">
             <label class="form-label">Father's Occupation</label>
-            <input type="text" class="form-control" placeholder="Occupation">
+            <input type="text" class="form-control" placeholder="Occupation" name="f_occupation">
           </div>
           <div class="col-md-6">
             <label class="form-label required-field">Mother's Name</label>
-            <input type="text" class="form-control" placeholder="Mother's Name" required>
+            <input type="text" class="form-control" placeholder="Mother's Name" required name="mother_name">
           </div>
           <div class="col-md-6">
             <label class="form-label">Mother's Occupation</label>
-            <input type="text" class="form-control" placeholder="Occupation">
+            <input type="text" class="form-control" placeholder="Occupation" name="m_occupation">
           </div>
-      <div class="col-6">
-<div class="row">
-              <div class="col-6">
+      <div class="col-md-6">
+        <div class="row g-2">
+          <!-- Date of Birth -->
+          <div class="col-12 col-sm-6">
             <label class="form-label required-field">Date of Birth</label>
-            <input type="date" class="form-control" required>
+            <input type="date" class="form-control" required name="dob">
           </div>
-           <div class="col-6">
+          <!-- Category -->
+          <div class="col-12 col-sm-6">
             <label class="form-label required-field">Category</label>
-            <select class="form-select" required>
+            <select class="form-select" required name="category">
               <option value="" selected disabled>Select Category</option>
               <option>General</option>
               <option>SC</option>
@@ -120,12 +122,12 @@ $form_no = 'S.No.' . time(); ?>
               <option>Other</option>
             </select>
           </div>
-         
+          <!-- Aadhar Number -->
           <div class="col-12">
             <label class="form-label required-field">Aadhar Number</label>
-            <input type="text" class="form-control" placeholder="12-digit Aadhar" pattern="[0-9]{12}" required>
+            <input type="text" class="form-control" placeholder="12-digit Aadhar" pattern="[0-9]{12}" required name="aadhar">
           </div>
-</div>
+        </div>
       </div>
        <div class="col-md-6">
             <label class="form-label required-field">Upload Photo</label>
@@ -134,12 +136,11 @@ $form_no = 'S.No.' . time(); ?>
                 <i class="fas fa-camera fa-2x mb-2"></i>
                 <p class="mb-1">Click to upload photo</p>
                 <small class="text-muted">(Max 2MB, JPG/PNG)</small>
-                <input type="file" class="file-upload-input" accept="image/*" required>
+                <input type="file" class="file-upload-input" accept="image/*" required name="photo">
+                <span class="file-name text-primary mt-2" style="display:block;font-size:0.95em;"></span>
               </div>
             </div>
-          </div> <div class="col-6">
-
-      </div>
+          </div>
         </div>
       </div>
 
@@ -150,24 +151,24 @@ $form_no = 'S.No.' . time(); ?>
         </div>
         <div class="mb-3">
           <label class="form-label required-field">Permanent Address</label>
-          <textarea class="form-control" rows="3" placeholder="Full address with PIN code" required></textarea>
+          <textarea class="form-control" rows="3" placeholder="Full address with PIN code" required id="perm" name="perm_address"></textarea>
         </div>
         <div class="form-check mb-3">
-          <input class="form-check-input" type="checkbox" id="sameAddress">
+          <input class="form-check-input" type="checkbox" id="sameAddress" name="same_address">
           <label class="form-check-label" for="sameAddress">Same as permanent address</label>
         </div>
         <div class="mb-3" id="localAddressField">
           <label class="form-label">Local Address (if different)</label>
-          <textarea class="form-control" rows="3" placeholder="Local address details"></textarea>
+          <textarea class="form-control" rows="3" placeholder="Local address details" id="local" name="local_address"></textarea>
         </div>
         <div class="row g-3">
           <div class="col-md-6">
             <label class="form-label required-field">Phone / Mobile</label>
-            <input type="tel" class="form-control" placeholder="With STD code" required>
+            <input type="tel" class="form-control" placeholder="With STD code" required name="phone">
           </div>
           <div class="col-md-6">
             <label class="form-label">Email</label>
-            <input type="email" class="form-control" placeholder="example@email.com">
+            <input type="email" class="form-control" placeholder="example@email.com" name="email">
           </div>
         </div>
       </div>
@@ -180,15 +181,15 @@ $form_no = 'S.No.' . time(); ?>
         <div class="row g-3">
           <div class="col-md-4">
             <label class="form-label">Subject 1</label>
-            <input type="text" class="form-control" placeholder="Main subject">
+            <input type="text" class="form-control" placeholder="Main subject" name="subject1">
           </div>
           <div class="col-md-4">
             <label class="form-label">Subject 2</label>
-            <input type="text" class="form-control" placeholder="Secondary subject">
+            <input type="text" class="form-control" placeholder="Secondary subject" name="subject2">
           </div>
           <div class="col-md-4">
             <label class="form-label">Subject 3</label>
-            <input type="text" class="form-control" placeholder="Additional subject">
+            <input type="text" class="form-control" placeholder="Additional subject" name="subject3">
           </div>
         </div>
       </div>
@@ -201,21 +202,21 @@ $form_no = 'S.No.' . time(); ?>
         <div class="row">
           <div class="col-md-6">
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="Elementary Computer" id="comp1">
+              <input class="form-check-input" type="checkbox" value="Elementary Computer" id="comp1" name="comp_computer">
               <label class="form-check-label" for="comp1">Elementary Computer</label>
             </div>
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="Environmental Studies" id="comp2">
+              <input class="form-check-input" type="checkbox" value="Environmental Studies" id="comp2" name="comp_env">
               <label class="form-check-label" for="comp2">Environmental Studies</label>
             </div>
           </div>
           <div class="col-md-6">
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="General English" id="comp3">
+              <input class="form-check-input" type="checkbox" value="General English" id="comp3" name="comp_english">
               <label class="form-check-label" for="comp3">General English</label>
             </div>
             <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="General Hindi" id="comp4">
+              <input class="form-check-input" type="checkbox" value="General Hindi" id="comp4" name="comp_hindi">
               <label class="form-check-label" for="comp4">General Hindi</label>
             </div>
           </div>
@@ -227,8 +228,9 @@ $form_no = 'S.No.' . time(); ?>
         <div class="section-title">
           <i class="fas fa-history"></i> 6. Previous Examination Passed
         </div>
-        <div class="table-responsive">
-          <table class="table table-bordered table-hover">
+        
+        <div class="table-responsive" id="table">
+            <table class="table">
             <thead class="table-light">
               <tr>
                 <th>Course Title</th>
@@ -236,18 +238,18 @@ $form_no = 'S.No.' . time(); ?>
                 <th>University/Board</th>
                 <th>Subjects</th>
                 <th>%</th>
-                <th>Division</th>
+                <th class="division-col">Division</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td><input type="text" class="form-control" placeholder="e.g. 12th"></td>
-                <td><input type="text" class="form-control" placeholder="Passing year"></td>
-                <td><input type="text" class="form-control" placeholder="Board name"></td>
-                <td><input type="text" class="form-control" placeholder="Main subjects"></td>
-                <td><input type="text" class="form-control" placeholder="Percentage"></td>
+                <td><input type="text" class="form-control" placeholder="e.g. 12th" name="prev_course_title"></td>
+                <td><input type="text" class="form-control" placeholder="year" name="prev_year"></td>
+                <td><input type="text" class="form-control" placeholder="Board" name="prev_board"></td>
+                <td><input type="text" class="form-control" placeholder="Main sub" name="prev_subjects"></td>
+                <td><input type="text" class="form-control" placeholder="Percentage" name="prev_percentage"></td>
                 <td>
-                  <select class="form-select">
+                  <select class="form-select" name="prev_division">
                     <option value="" disabled selected>Select</option>
                     <option>1st</option>
                     <option>2nd</option>
@@ -255,13 +257,7 @@ $form_no = 'S.No.' . time(); ?>
                   </select>
                 </td>
               </tr>
-              <tr>
-                <td colspan="6" class="text-center">
-                  <button type="button" class="btn btn-sm btn-outline-primary">
-                    <i class="fas fa-plus"></i> Add Another Qualification
-                  </button>
-                </td>
-              </tr>
+           
             </tbody>
           </table>
         </div>
@@ -274,16 +270,16 @@ $form_no = 'S.No.' . time(); ?>
         </div>
         <div class="mb-3">
           <label class="form-label required-field">School/College Name</label>
-          <input type="text" class="form-control" placeholder="Full institution name" required>
+          <input type="text" class="form-control" placeholder="Full institution name" required name="institution_name">
         </div>
         <div class="row g-3">
           <div class="col-md-6">
             <label class="form-label">Address</label>
-            <input type="text" class="form-control" placeholder="Institution address">
+            <input type="text" class="form-control" placeholder="Institution address" name="institution_address">
           </div>
           <div class="col-md-6">
             <label class="form-label">Contact Number</label>
-            <input type="tel" class="form-control" placeholder="Phone number">
+            <input type="tel" class="form-control" placeholder="Phone number" name="institution_contact">
           </div>
         </div>
       </div>
@@ -293,7 +289,7 @@ $form_no = 'S.No.' . time(); ?>
         <div class="section-title">
           <i class="fas fa-id-card"></i> 8. University Enrollment No. (if available)
         </div>
-        <input type="text" class="form-control" placeholder="Enrollment Number">
+        <input type="text" class="form-control" placeholder="Enrollment Number" name="university_enrollment">
       </div>
 
       <!-- 9. NSS -->
@@ -304,7 +300,7 @@ $form_no = 'S.No.' . time(); ?>
         <div class="row g-3">
           <div class="col-md-6">
             <label class="form-label">Is NSS Offered?</label>
-            <select class="form-select">
+            <select class="form-select" name="nss_offered">
               <option value="" selected disabled>Select</option>
               <option>Yes</option>
               <option>No</option>
@@ -312,30 +308,31 @@ $form_no = 'S.No.' . time(); ?>
           </div>
           <div class="col-md-6">
             <label class="form-label">Other Activities</label>
-            <input type="text" class="form-control" placeholder="Sports, clubs, etc.">
+            <input type="text" class="form-control" placeholder="Sports, clubs, etc." name="other_activities">
           </div>
         </div>
       </div>
+   <!-- Declaration -->
+<div class="form-section bg-light p-3 rounded">
+  <h5 class="mb-3"><i class="fas fa-pen-nib"></i> Declaration</h5>
+  <p>
+    I hereby declare that the information provided above is true to the best of my knowledge. I understand that any incorrect information may result in the cancellation of my admission.
+  </p>
+  <div class="form-check">
+    <input class="form-check-input" type="checkbox" id="declaration" required name="declaration">
+    <label class="form-check-label" for="declaration">
+      I agree to the above declaration
+    </label>
+  </div>
+</div>
 
-      <!-- Declaration -->
-      <div class="form-section bg-light">
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" id="declaration" required>
-          <label class="form-check-label" for="declaration">
-            I hereby declare that all the information provided in this form is true and correct to the best of my knowledge.
-          </label>
-        </div>
-      </div>
+<!-- Submit Button -->
+<div class="text-center mt-4">
+  <button type="button" id="submit" class="btn btn-primary px-5 py-2">
+    <i class="fas fa-paper-plane"></i> Submit Application
+  </button>
+</div>
 
-      <!-- Submit -->
-      <div class="d-flex justify-content-between mt-4">
-        <button type="button" class="btn btn-outline-secondary">
-          <i class="fas fa-arrow-left"></i> Back
-        </button>
-        <button type="button" id="submit" class="btn btn-primary">
-          Submit Form <i class="fas fa-arrow-right"></i>
-        </button>
-      </div>
     </form>
   </div>
 </div>

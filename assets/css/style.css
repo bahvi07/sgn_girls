@@ -1,4 +1,4 @@
-   :root {
+:root {
       --primary-color: #8e44ad;
       --secondary-color: #f3b404;
       --accent-color: #3498db;
@@ -105,6 +105,8 @@
     
     .table {
       margin-bottom: 0;
+      min-width: 700px;
+      font-size: 0.98rem;
     }
     
     .table thead {
@@ -114,6 +116,18 @@
     .table th {
       font-weight: 600;
       color: var(--dark-text);
+    }
+    
+    .table input.form-control {
+      min-width: 90px;
+      width: 100%;
+      font-size: 0.98rem;
+      padding: 8px 10px;
+      box-sizing: border-box;
+    }
+    
+    .table td, .table th {
+      padding: 8px 6px;
     }
     
     .form-check-input:checked {
@@ -156,22 +170,45 @@
       content: " *";
       color: #e74c3c;
     }
+    /* Desktop and mobile: wider division column */
+.table .division-col {
+  min-width: 120px;
+  width: 120px;
+}
+
     
-    @media (max-width: 768px) {
-      /* body{
-        padding: 0;
-      } */
-      .header {
-        padding: 1.5rem 0;
-      }
-      
-      .form-container {
-        padding: 1rem;
-      }
-      
-      .section-title {
-        padding: 10px 12px;
-        font-size: 1rem;
-      }
-    }
- 
+    /* Responsive table: horizontal scroll on mobile */
+@media (max-width: 768px) {
+  body{
+    padding: 0;
+  }
+  .header {
+    padding: 1.5rem 0;
+  }
+  
+  .form-container {
+    padding: 1rem;
+  }
+  
+  .section-title {
+    padding: 10px 12px;
+    font-size: 1rem;
+  }
+  .table-responsive {
+    width: 100%;
+    overflow-x: auto;
+  }
+   .table .division-col {
+    min-width: 120px;
+    width: 120px;
+    font-size: 1rem;
+  }
+  .table td, .table th {
+    min-width: 80px;   /* Adjust as needed */
+    font-size: 1rem;   /* Slightly larger font for mobile */
+    padding: 8px 6px;
+    word-break: break-word;
+  }
+}
+
+

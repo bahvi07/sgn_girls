@@ -23,4 +23,4 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 </head>
-<body class="p-4" style="font-family: 'Roboto', sans-serif;">
+<body class="" style="font-family: 'Roboto', sans-serif;">
