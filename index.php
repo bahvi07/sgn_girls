@@ -41,7 +41,7 @@ $form_no = 'S.No.' . time(); ?>
           </div>
           <div class="col-md-3">
             <label class="form-label">Part</label>
-            <input type="text" class="form-control" placeholder="Part I/II" name="part">
+            <input type="tel" class="form-control num-only" placeholder="Part 1/2" maxlength="1" name="part">
           </div>
           <div class="col-md-3">
             <label class="form-label required-field">Medium</label>
@@ -81,7 +81,7 @@ $form_no = 'S.No.' . time(); ?>
         <div class="row g-3">
           <div class="col-md-6">
             <label class="form-label required-field">Name of Applicant (in English)</label>
-            <input type="text" class="form-control" placeholder="Full Name" required name="applicant_name">
+            <input type="text" class="form-control char-only" placeholder="Full Name" required name="applicant_name">
           </div>
           <div class="col-md-6">
             <label class="form-label">Name of Applicant (in Hindi)</label>
@@ -89,19 +89,19 @@ $form_no = 'S.No.' . time(); ?>
           </div>
           <div class="col-md-6">
             <label class="form-label required-field">Father's Name</label>
-            <input type="text" class="form-control" placeholder="Father's Name" required name="father_name">
+            <input type="text" class="form-control char-only" placeholder="Father's Name" required name="father_name">
           </div>
           <div class="col-md-6">
             <label class="form-label">Father's Occupation</label>
-            <input type="text" class="form-control" placeholder="Occupation" name="f_occupation">
+            <input type="text" class="form-control char-only" placeholder="Occupation" name="f_occupation">
           </div>
           <div class="col-md-6">
             <label class="form-label required-field">Mother's Name</label>
-            <input type="text" class="form-control" placeholder="Mother's Name" required name="mother_name">
+            <input type="text" class="form-control char-only" placeholder="Mother's Name" required name="mother_name">
           </div>
           <div class="col-md-6">
             <label class="form-label">Mother's Occupation</label>
-            <input type="text" class="form-control" placeholder="Occupation" name="m_occupation">
+            <input type="text" class="form-control char-only" placeholder="Occupation" name="m_occupation">
           </div>
       <div class="col-md-6">
         <div class="row g-2">
@@ -125,7 +125,7 @@ $form_no = 'S.No.' . time(); ?>
           <!-- Aadhar Number -->
           <div class="col-12">
             <label class="form-label required-field">Aadhar Number</label>
-            <input type="text" class="form-control" placeholder="12-digit Aadhar" pattern="[0-9]{12}" required name="aadhar">
+            <input type="tel" maxlength="12" class="form-control num-only" placeholder="12-digit Aadhar" pattern="[0-9]{12}" required name="aadhar">
           </div>
         </div>
       </div>
@@ -164,7 +164,7 @@ $form_no = 'S.No.' . time(); ?>
         <div class="row g-3">
           <div class="col-md-6">
             <label class="form-label required-field">Phone / Mobile</label>
-            <input type="tel" class="form-control" placeholder="With STD code" required name="phone">
+            <input type="tel" class="form-control num-only" placeholder="With STD code" required name="phone">
           </div>
           <div class="col-md-6">
             <label class="form-label">Email</label>
@@ -244,10 +244,10 @@ $form_no = 'S.No.' . time(); ?>
             <tbody>
               <tr>
                 <td><input type="text" class="form-control" placeholder="e.g. 12th" name="prev_course_title"></td>
-                <td><input type="text" class="form-control" placeholder="year" name="prev_year"></td>
+                <td><input type="text" class="form-control num-only" placeholder="year" name="prev_year"></td>
                 <td><input type="text" class="form-control" placeholder="Board" name="prev_board"></td>
                 <td><input type="text" class="form-control" placeholder="Main sub" name="prev_subjects"></td>
-                <td><input type="text" class="form-control" placeholder="Percentage" name="prev_percentage"></td>
+                <td><input type="text" class="form-control num-only" placeholder="Percentage" name="prev_percentage"></td>
                 <td>
                   <select class="form-select" name="prev_division">
                     <option value="" disabled selected>Select</option>
@@ -279,7 +279,7 @@ $form_no = 'S.No.' . time(); ?>
           </div>
           <div class="col-md-6">
             <label class="form-label">Contact Number</label>
-            <input type="tel" class="form-control" placeholder="Phone number" name="institution_contact">
+            <input type="tel" class="form-control num-only" placeholder="Phone number" name="institution_contact">
           </div>
         </div>
       </div>

@@ -74,9 +74,9 @@ $stmt = $conn->prepare("INSERT INTO admissions (
     institution_contact, university_enrollment, nss_offered, other_activities, declaration
 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-// Corrected bind_param: 34 strings (s) + 5 integers (i) = 39 total
+
 $stmt->bind_param(
-    "ssssssssssssssssssssssiiiissssssssssssi",  // 34 's' + 5 'i' = 39 total
+    "ssssssssssssssssssssssiiiissssssssssssi", 
     $form_no, $class, $part, $medium, $faculty,
     $applicant_name, $hindi_name, $father_name, $f_occupation,
     $mother_name, $m_occupation, $dob, $category, $aadhar, $photo, $perm_address,

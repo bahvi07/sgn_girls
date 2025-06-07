@@ -82,6 +82,7 @@ submitBtn.addEventListener('click', async (e) => {
   }
   if (!dob.value) {
     Swal.fire("Validation Error", "Please select Date of Birth", "warning");
+    
     return;
   }
   if (!category.value) {
@@ -92,6 +93,7 @@ submitBtn.addEventListener('click', async (e) => {
     Swal.fire("Validation Error", "Please enter a valid 12-digit Aadhar Number", "warning");
     return;
   }
+
   if (!permAddress.value.trim()) {
     Swal.fire("Validation Error", "Please enter Permanent Address", "warning");
     return;
@@ -166,4 +168,24 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   }
+});
+
+// Allow only letters and spaces in char-only fields
+document.querySelectorAll('.char-only').forEach(input => {
+  input.addEventListener('input', function() {
+    if (/[^a-zA-Z\s]/.test(this.value)) {
+      Swal.fire("Invalid Input", "Only letters and spaces are allowed.", "warning");
+      this.value = this.value.replace(/[^a-zA-Z\s]/g, '');
+    }
+  });
+});
+
+// Allow only numbers in num-only fields
+document.querySelectorAll('.num-only').forEach(input => {
+  input.addEventListener('input', function() {
+    if (/[^0-9]/.test(this.value)) {
+      Swal.fire("Invalid Input", "Only numbers are allowed.", "warning");
+      this.value = this.value.replace(/[^0-9]/g, '');
+    }
+  });
 });

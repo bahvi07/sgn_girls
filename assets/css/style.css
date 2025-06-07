@@ -12,7 +12,12 @@
       color: var(--dark-text);
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-    
+    input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
     .header {
       background: linear-gradient( #0d5ef4);
       color: white;
