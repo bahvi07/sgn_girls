@@ -332,6 +332,12 @@ $form_no = 'S.No.' . time(); ?>
     <i class="fas fa-paper-plane"></i> Submit Application
   </button>
 </div>
+<div class="text-center mt-4 ">
+  <a href="./admission/user_pdf.php?form_no=<?php echo $form_no; ?>" id="download" class="btn btn-success ml-2" style="display:none;" target="_blank" onclick="setTimeout(function(){ location.reload(); }, 1000);">
+        <i class="fa-solid fa-download"></i> Download Admission PDF
+      </a>
+</div>
+
 
     </form>
   </div>

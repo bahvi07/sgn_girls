@@ -126,6 +126,7 @@ body:formData
       if (data.success === true) {
         Swal.fire("Success", "Form submitted successfully!", "success").then(() => {
           // Optionally reset the form or redirect
+          document.getElementById('download').style.display='block';
           form.reset();
           progressBar.style.width = '0%';
           progressBar.setAttribute('aria-valuenow', 0);
