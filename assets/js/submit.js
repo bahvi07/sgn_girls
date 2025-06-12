@@ -61,6 +61,18 @@ submitBtn.addEventListener('click', async (e) => {
   e.preventDefault();
   const form = document.getElementById('admission_form');
 
+  // Highlight empty required fields
+  const firstInvalid = highlightEmptyRequiredFields(form);
+  if (firstInvalid) {
+    firstInvalid.focus();
+    Swal.fire("Validation Error", "Please fill all required fields.", "warning");
+    return;
+  }
+
+  // Disable button and show waiting text
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm mr-2"></span> Please wait...';
+
   // Get required fields
   const applicantName = form.querySelector('[name="applicant_name"]');
   const motherName = form.querySelector('[name="mother_name"]');
@@ -116,8 +128,8 @@ submitBtn.addEventListener('click', async (e) => {
 
    try{
     const response=await fetch('admission/submit.php',{
-method:'POST',
-body:formData
+      method:'POST',
+      body:formData
     });
 
     const result = await response.text();
@@ -141,6 +153,9 @@ body:formData
   } catch (error) {
     console.error("Error:", error);
     Swal.fire("Failed", "Failed to submit Form" + error.message, "error");
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Application';
   }
 });
 }
@@ -190,3 +205,24 @@ document.querySelectorAll('.num-only').forEach(input => {
     }
   });
 });
+
+// Add red border to empty required fields on submit and remove on input
+function highlightEmptyRequiredFields(form) {
+  const requiredFields = form.querySelectorAll('[required]');
+  let firstInvalid = null;
+  requiredFields.forEach(field => {
+    if (!field.value.trim()) {
+      field.classList.add('border', 'border-danger');
+      if (!firstInvalid) firstInvalid = field;
+    } else {
+      field.classList.remove('border', 'border-danger');
+    }
+    // Remove red border on input/change
+    field.addEventListener('input', function() {
+      if (this.value.trim()) {
+        this.classList.remove('border', 'border-danger');
+      }
+    });
+  });
+  return firstInvalid;
+}

@@ -56,8 +56,8 @@ $accent = '#fbc02d';  // Yellow accent
 $html = '
 <style>
     body { font-family: Arial, sans-serif; font-size: 12px; line-height: 1.4; margin: 0; padding: 0; background: #f7f7fa; }
-    .header { background: ' . $primary . '; color: #fff; padding: 20px 30px 20px 30px; border-bottom: 4px solid ' . $accent . '; display: flex; align-items: center; justify-content: space-between; }
-    .header-left { display: flex; align-items: center; }
+    .header-table { width: 100%; border-collapse: collapse; background: ' . $primary . '; color: #fff; border-bottom: 4px solid ' . $accent . '; }
+    .header-table td { vertical-align: top; padding: 18px 20px; }
     .logo { height: 60px; margin-right: 18px; }
     .college-info { }
     .college-name { font-size: 20px; font-weight: bold; margin-bottom: 2px; letter-spacing: 1px; }
@@ -73,19 +73,23 @@ $html = '
     .exam-table th { background: #e3e3e3; font-weight: bold; }
 </style>
 
-<div class="header">
-    <div class="header-left">
-        ' . ($base64 ? '<img src="' . $base64 . '" alt="College Logo" class="logo">' : '') . '
-        <div class="college-info">
-            <div class="college-name">SRI GURU NANAK GIRLS P.G. COLLEGE</div>
-            <div>Affiliated to Maharaja Ganga Singh University, Bikaner (Raj.)</div>
-            <div class="form-title">ADMISSION FORM</div>
-        </div>
-    </div>
-    <div class="photo-box">' .
-        ($photoPath ? '<img src="' . $photoPath . '" alt="Applicant Photo">' : '<span style="color:#888;font-size:11px;">No Photo</span>') .
-    '</div>
-</div>
+<table class="header-table">
+    <tr>
+        <td style="width:70%;">
+            ' . ($base64 ? '<img src="' . $base64 . '" alt="College Logo" class="logo">' : '') . '
+            <div class="college-info">
+                <div class="college-name">SRI GURU NANAK GIRLS P.G. COLLEGE</div>
+                <div>Affiliated to Maharaja Ganga Singh University, Bikaner (Raj.)</div>
+                <div class="form-title">ADMISSION FORM</div>
+            </div>
+        </td>
+        <td style="width:30%; text-align:right;">
+            <div class="photo-box" style="margin-left:auto;">
+                ' . ($photoPath ? '<img src="' . $photoPath . '" alt="Applicant Photo">' : '<span style="color:#888;font-size:11px;">No Photo</span>') . '
+            </div>
+        </td>
+    </tr>
+</table>
 ';
 
 // Admission/Class Details
@@ -296,11 +300,16 @@ $html .= '<div style="margin-top: 30px; text-align: center; font-size: 10px; col
     <br>Downloaded on: ' . date('Y-m-d H:i:s') . '
 </div>';
 
+// Preview or Download
+if (isset($_GET['preview']) && $_GET['preview'] == '1') {
+    // Show as HTML preview in browser
+    echo $html;
+    exit;
+}
+
 $dompdf->loadHtml($html);
 $dompdf->setPaper('A4', 'portrait');
 $dompdf->render();
-
-// Output PDF for download
 $dompdf->stream("Admission_Form_{$form_no}.pdf", array("Attachment" => true));
 exit;
 ?>

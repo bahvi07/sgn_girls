@@ -37,15 +37,15 @@ $form_no = 'S.No.' . time(); ?>
         <div class="row g-3">
           <div class="col-md-3">
             <label class="form-label required-field">Class</label>
-            <input type="text" class="form-control" placeholder="e.g. B.A. I" required name="class">
+            <input type="text" class="form-control char-only" placeholder="e.g. B.A. I" required name="class" required>
           </div>
           <div class="col-md-3">
             <label class="form-label">Part</label>
-            <input type="tel" class="form-control num-only" placeholder="Part 1/2" maxlength="1" name="part">
+            <input type="tel" class="form-control num-only" placeholder="Part 1/2" maxlength="1" name="part" required>
           </div>
           <div class="col-md-3">
             <label class="form-label required-field">Medium</label>
-            <select class="form-select" required name="medium">
+            <select class="form-select" required name="medium" required>
               <option value="" selected disabled>Select Medium</option>
               <option value="English">English</option>
               <option value="Hindi">Hindi</option>
@@ -85,7 +85,7 @@ $form_no = 'S.No.' . time(); ?>
           </div>
           <div class="col-md-6">
             <label class="form-label">Name of Applicant (in Hindi)</label>
-            <input type="text" class="form-control" placeholder="" name="hindi_name">
+            <input type="text" class="form-control char-only" placeholder="" name="hindi_name">
           </div>
           <div class="col-md-6">
             <label class="form-label required-field">Father's Name</label>
@@ -108,7 +108,7 @@ $form_no = 'S.No.' . time(); ?>
           <!-- Date of Birth -->
           <div class="col-12 col-sm-6">
             <label class="form-label required-field">Date of Birth</label>
-            <input type="date" class="form-control" required name="dob">
+            <input type="date" class="form-control" required name="dob">     
           </div>
           <!-- Category -->
           <div class="col-12 col-sm-6">
@@ -168,7 +168,7 @@ $form_no = 'S.No.' . time(); ?>
           </div>
           <div class="col-md-6">
             <label class="form-label">Email</label>
-            <input type="email" class="form-control" placeholder="example@email.com" name="email">
+            <input type="email" class="form-control" placeholder="example@email.com" name="email" required>
           </div>
         </div>
       </div>
@@ -181,15 +181,15 @@ $form_no = 'S.No.' . time(); ?>
         <div class="row g-3">
           <div class="col-md-4">
             <label class="form-label">Subject 1</label>
-            <input type="text" class="form-control" placeholder="Main subject" name="subject1">
+            <input type="text" class="form-control char-only" placeholder="Main subject" name="subject1">
           </div>
           <div class="col-md-4">
             <label class="form-label">Subject 2</label>
-            <input type="text" class="form-control" placeholder="Secondary subject" name="subject2">
+            <input type="text" class="form-control char-only" placeholder="Secondary subject" name="subject2">
           </div>
           <div class="col-md-4">
             <label class="form-label">Subject 3</label>
-            <input type="text" class="form-control" placeholder="Additional subject" name="subject3">
+            <input type="text" class="form-control char-only" placeholder="Additional subject" name="subject3">
           </div>
         </div>
       </div>
@@ -243,13 +243,13 @@ $form_no = 'S.No.' . time(); ?>
             </thead>
             <tbody>
               <tr>
-                <td><input type="text" class="form-control" placeholder="e.g. 12th" name="prev_course_title"></td>
-                <td><input type="text" class="form-control num-only" placeholder="year" name="prev_year"></td>
-                <td><input type="text" class="form-control" placeholder="Board" name="prev_board"></td>
-                <td><input type="text" class="form-control" placeholder="Main sub" name="prev_subjects"></td>
-                <td><input type="text" class="form-control num-only" placeholder="Percentage" name="prev_percentage"></td>
+                <td><input type="text" class="form-control char-only" placeholder="e.g. 12th" name="prev_course_title" required></td>
+                <td><input type="text" class="form-control num-only" placeholder="year" name="prev_year" required></td>
+                <td><input type="text" class="form-control char-only" placeholder="Board" name="prev_board" required></td>
+                <td><input type="text" class="form-control char-only" placeholder="Main sub" name="prev_subjects" required></td>
+                <td><input type="text" class="form-control num-only" placeholder="Percentage" name="prev_percentage"required></td>
                 <td>
-                  <select class="form-select" name="prev_division">
+                  <select class="form-select" name="prev_division" required>
                     <option value="" disabled selected>Select</option>
                     <option>1st</option>
                     <option>2nd</option>
@@ -270,16 +270,16 @@ $form_no = 'S.No.' . time(); ?>
         </div>
         <div class="mb-3">
           <label class="form-label required-field">School/College Name</label>
-          <input type="text" class="form-control" placeholder="Full institution name" required name="institution_name">
+          <input type="text" class="form-control char-only" placeholder="Full institution name" required name="institution_name" required>
         </div>
         <div class="row g-3">
           <div class="col-md-6">
             <label class="form-label">Address</label>
-            <input type="text" class="form-control" placeholder="Institution address" name="institution_address">
+            <input type="text" class="form-control" placeholder="Institution address" name="institution_address" required>
           </div>
           <div class="col-md-6">
             <label class="form-label">Contact Number</label>
-            <input type="tel" class="form-control num-only" placeholder="Phone number" name="institution_contact">
+            <input type="tel" class="form-control num-only" placeholder="Phone number" name="institution_contact" required>
           </div>
         </div>
       </div>
@@ -333,10 +333,30 @@ $form_no = 'S.No.' . time(); ?>
   </button>
 </div>
 <div class="text-center mt-4 ">
-  <a href="./admission/user_pdf.php?form_no=<?php echo $form_no; ?>" id="download" class="btn btn-success ml-2" style="display:none;" target="_blank" onclick="setTimeout(function(){ location.reload(); }, 1000);">
+  <a href="./admission/user_pdf.php?form_no=<?php echo $form_no; ?>" id="download" class="btn btn-success ml-2" style="display:none;">
         <i class="fa-solid fa-download"></i> Download Admission PDF
       </a>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var downloadBtn = document.getElementById('download');
+  if(downloadBtn){
+    downloadBtn.addEventListener('click', function(e){
+      e.preventDefault();
+      Swal.fire({
+        icon: 'success',
+        title: 'Download Started',
+        text: 'Your admission PDF is being downloaded.',
+        timer: 1800,
+        showConfirmButton: false
+      });
+      // Open PDF in same window so SweetAlert is visible
+      window.location.href = this.href;
+      setTimeout(function(){ location.reload(); }, 1000);
+    });
+  }
+});
+</script>
 
 
     </form>
