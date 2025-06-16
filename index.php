@@ -332,27 +332,18 @@ $form_no = 'S.No.' . time(); ?>
     <i class="fas fa-paper-plane"></i> Submit Application
   </button>
 </div>
-<div class="text-center mt-4 ">
-  <a href="./admission/user_pdf.php?form_no=<?php echo $form_no; ?>" id="download" class="btn btn-success ml-2" style="display:none;">
-        <i class="fa-solid fa-download"></i> Download Admission PDF
-      </a>
+<div class="text-center mt-4">
+  <a href="./admission/user_pdf.php?form_no=<?php echo $form_no; ?>" id="download" class="btn btn-success ml-2" style="display:none;" download="Admission_Form_<?php echo $form_no; ?>.pdf">
+    <i class="fa-solid fa-download"></i> Download Admission PDF
+  </a>
 </div>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   var downloadBtn = document.getElementById('download');
-  if(downloadBtn){
-    downloadBtn.addEventListener('click', function(e){
-      e.preventDefault();
-      Swal.fire({
-        icon: 'success',
-        title: 'Download Started',
-        text: 'Your admission PDF is being downloaded.',
-        timer: 1800,
-        showConfirmButton: false
-      });
-      // Open PDF in same window so SweetAlert is visible
-      window.location.href = this.href;
-      setTimeout(function(){ location.reload(); }, 1000);
+  if(downloadBtn) {
+    downloadBtn.addEventListener('click', function(e) {
+      // Let the default download behavior happen
+      // The download attribute will handle the download
     });
   }
 });

@@ -310,6 +310,13 @@ if (isset($_GET['preview']) && $_GET['preview'] == '1') {
 $dompdf->loadHtml($html);
 $dompdf->setPaper('A4', 'portrait');
 $dompdf->render();
-$dompdf->stream("Admission_Form_{$form_no}.pdf", array("Attachment" => true));
+
+// Set proper headers for PDF download
+header('Content-Type: application/pdf');
+header('Content-Disposition: attachment; filename="Admission_Form_' . $form_no . '.pdf"');
+header('Cache-Control: private, max-age=0, must-revalidate');
+header('Pragma: public');
+
+echo $dompdf->output();
 exit;
 ?>
