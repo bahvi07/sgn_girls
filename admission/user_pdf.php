@@ -1,6 +1,7 @@
 <?php
+date_default_timezone_set('Asia/Kolkata');
 require_once '../includes/config.php';
-require_once 'C:\xampp\vendor\autoload.php';
+require './vendor/autoload.php';
 
 use Dompdf\Dompdf;
 use Dompdf\Options;

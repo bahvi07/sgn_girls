@@ -1,0 +1,11 @@
+# Deny access to sensitive files
+<FilesMatch "(\.env|\.git|composer\.json|composer\.lock|config\.php|database\.sql)">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Disable directory listing
+Options -Indexes
+
+# Block access to hidden files (files starting with .)
+RedirectMatch 404 /\..*$ 

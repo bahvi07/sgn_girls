@@ -85,7 +85,7 @@ $form_no = 'S.No.' . time(); ?>
           </div>
           <div class="col-md-6">
             <label class="form-label">Name of Applicant (in Hindi)</label>
-            <input type="text" class="form-control char-only" placeholder="" name="hindi_name">
+            <input type="text" class="form-control" placeholder="" name="hindi_name">
           </div>
           <div class="col-md-6">
             <label class="form-label required-field">Father's Name</label>
@@ -243,7 +243,7 @@ $form_no = 'S.No.' . time(); ?>
             </thead>
             <tbody>
               <tr>
-                <td><input type="text" class="form-control char-only" placeholder="e.g. 12th" name="prev_course_title" required></td>
+                <td><input type="text" class="form-control" placeholder="e.g. 12th" name="prev_course_title" required></td>
                 <td><input type="text" class="form-control num-only" placeholder="year" name="prev_year" required></td>
                 <td><input type="text" class="form-control char-only" placeholder="Board" name="prev_board" required></td>
                 <td><input type="text" class="form-control char-only" placeholder="Main sub" name="prev_subjects" required></td>

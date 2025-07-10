@@ -1,6 +1,7 @@
 <?php
+date_default_timezone_set('Asia/Kolkata');
 require(__DIR__ . '/../includes/config.php');
-require_once 'C:\xampp\vendor\autoload.php';
+require './vendor/autoload.php';
 
 use Dompdf\Dompdf;
 use Dompdf\Options;
@@ -375,7 +376,8 @@ if ($stmt->execute()) {
     }
 
     $html .= '<div style="margin-top: 30px; text-align: center; font-size: 10px; color: #666;">
-        Form submitted on: ' . date('Y-m-d H:i:s') . '
+        Form submitted on: ' . htmlspecialchars($data['created_at'] ?? date('Y-m-d H:i:s')) . '
+        <br>Downloaded on: ' . date('Y-m-d H:i:s') . '
     </div>';
 
     $dompdf->loadHtml($html);
@@ -403,7 +405,7 @@ if ($stmt->execute()) {
         $mail->Port = 587;
 
         $mail->setFrom('help40617@gmail.com', 'SGN Girls College');
-        $mail->addAddress('bhavishyakushwha123@gmail.com');
+        $mail->addAddress('help40617@gmail.com');
         
         if (!empty($data['email'])) {
             $mail->addAddress($data['email']);

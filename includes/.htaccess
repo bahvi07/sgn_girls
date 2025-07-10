@@ -1,0 +1,8 @@
+# Deny access to sensitive files in includes/
+<FilesMatch "(\.env|config\.php|database\.sql)">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Disable directory listing
+Options -Indexes 
