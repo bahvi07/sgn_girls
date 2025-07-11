@@ -399,13 +399,13 @@ if ($stmt->execute()) {
         $mail->isSMTP();
         $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
-        $mail->Username = 'help40617@gmail.com';
-        $mail->Password = 'lrmuluhlzrohwvoq';
+        $mail->Username = 'sgngirlpgcollege@gmail.com';
+        $mail->Password = 'swxjunjmumglrpws';
         $mail->SMTPSecure = 'tls';
         $mail->Port = 587;
 
-        $mail->setFrom('help40617@gmail.com', 'SGN Girls College');
-        $mail->addAddress('help40617@gmail.com');
+        $mail->setFrom('sgngirlpgcollege@gmail.com', 'SGN Girls College');
+        $mail->addAddress('sgngirlpgcollege@gmail.com');
         
         if (!empty($data['email'])) {
             $mail->addAddress($data['email']);
