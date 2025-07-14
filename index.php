@@ -344,6 +344,9 @@ document.addEventListener('DOMContentLoaded', function() {
     downloadBtn.addEventListener('click', function(e) {
       // Let the default download behavior happen
       // The download attribute will handle the download
+      setTimeout(function() {
+        window.location.href = 'index.php';
+      }, 1000); // 1 second delay to allow download to start
     });
   }
 });

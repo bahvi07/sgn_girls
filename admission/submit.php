@@ -10,6 +10,26 @@ use PHPMailer\PHPMailer\Exception;
 
 header('Content-type:application/json');
 
+// Unicode helper functions
+function normalizeUnicodeText($text) {
+    if (class_exists('Normalizer')) {
+        return Normalizer::normalize(trim($text), Normalizer::FORM_C);
+    }
+    return trim($text);
+}
+
+function validateUnicodeText($text) {
+    // Check if text contains valid Unicode characters
+    return mb_check_encoding($text, 'UTF-8');
+}
+
+function sanitizeUnicodeText($text) {
+    $text = normalizeUnicodeText($text);
+    // Remove any non-printable characters except spaces
+    $text = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', $text);
+    return $text;
+}
+
 // Helper function for safe file upload
 function uploadPhoto($file) {
     $targetDir = "../uploads/photos/";
@@ -30,12 +50,12 @@ $class = $_POST['class'];
 $part = $_POST['part'];
 $medium = $_POST['medium'];
 $faculty = $_POST['faculty'];
-$applicant_name = $_POST['applicant_name'] ?? '';
-$hindi_name = $_POST['hindi_name'] ?? '';
-$father_name = $_POST['father_name'] ?? '';
-$f_occupation = $_POST['f_occupation'] ?? '';
-$mother_name = $_POST['mother_name'] ?? '';
-$m_occupation = $_POST['m_occupation'] ?? '';
+$applicant_name = sanitizeUnicodeText($_POST['applicant_name'] ?? '');
+$hindi_name = sanitizeUnicodeText($_POST['hindi_name'] ?? '');
+$father_name = sanitizeUnicodeText($_POST['father_name'] ?? '');
+$f_occupation = sanitizeUnicodeText($_POST['f_occupation'] ?? '');
+$mother_name = sanitizeUnicodeText($_POST['mother_name'] ?? '');
+$m_occupation = sanitizeUnicodeText($_POST['m_occupation'] ?? '');
 $dob = $_POST['dob'] ?? '';
 $category = $_POST['category'] ?? '';
 $aadhar = $_POST['aadhar'] ?? '';
@@ -108,7 +128,7 @@ if ($stmt->execute()) {
 
     // --- PDF GENERATION: Use the same format as user_pdf.php ---
     $options = new Options();
-    $options->set('defaultFont', 'Helvetica');
+    $options->set('defaultFont', 'NotoSansDevanagari');
     $options->set('isRemoteEnabled', true);
     $dompdf = new Dompdf($options);
 
@@ -134,8 +154,15 @@ if ($stmt->execute()) {
     $accent = '#fbc02d';
 
     $html = '
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <style>
-        body { font-family: Arial, sans-serif; font-size: 12px; line-height: 1.4; margin: 0; padding: 0; background: #f7f7fa; }
+        @font-face {
+            font-family: "NotoSansDevanagari";
+            src: url("data:font/truetype;base64,' . base64_encode(file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/sgn-girl-admission/assets/fonts/static/NotoSansDevanagari-Regular.ttf')) . '") format("truetype");
+        }
+        * {
+            font-family: "NotoSansDevanagari", Arial, sans-serif !important;
+        }
         .header-table { width: 100%; border-collapse: collapse; background: ' . $primary . '; color: #fff; border-bottom: 4px solid ' . $accent . '; }
         .header-table td { vertical-align: top; padding: 18px 20px; }
         .logo { height: 60px; margin-right: 18px; }

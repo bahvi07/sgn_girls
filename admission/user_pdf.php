@@ -26,7 +26,7 @@ if (!$data) {
 
 // Generate PDF
 $options = new Options();
-$options->set('defaultFont', 'Helvetica');
+$options->set('defaultFont', 'NotoSansDevanagari');
 $options->set('isRemoteEnabled', true);
 $dompdf = new Dompdf($options);
 
@@ -55,8 +55,15 @@ $primary = '#1a237e'; // Deep blue
 $accent = '#fbc02d';  // Yellow accent
 
 $html = '
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <style>
-    body { font-family: Arial, sans-serif; font-size: 12px; line-height: 1.4; margin: 0; padding: 0; background: #f7f7fa; }
+    @font-face {
+        font-family: "NotoSansDevanagari";
+        src: url("data:font/truetype;base64,' . base64_encode(file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/sgn-girl-admission/assets/fonts/static/NotoSansDevanagari-Regular.ttf')) . '") format("truetype");
+    }
+    * {
+        font-family: "NotoSansDevanagari", Arial, sans-serif !important;
+    }
     .header-table { width: 100%; border-collapse: collapse; background: ' . $primary . '; color: #fff; border-bottom: 4px solid ' . $accent . '; }
     .header-table td { vertical-align: top; padding: 18px 20px; }
     .logo { height: 60px; margin-right: 18px; }
