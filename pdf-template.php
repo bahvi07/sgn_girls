@@ -5,9 +5,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; }
+        @page { margin: 20px; }
+        @font-face {
+            font-family: 'Noto Sans Devanagari';
+            font-style: normal;
+            font-weight: normal;
+            src: url('file://<?php echo str_replace('\\', '/', __DIR__) ?>/assets/fonts/NotoSansDevanagari-Regular.ttf') format('truetype');
+        }
+        body { 
+            font-family: 'Noto Sans Devanagari', Arial, sans-serif; 
+            line-height: 1.6;
+            direction: ltr;
+            margin: 0;
+            padding: 0;
+            -webkit-font-smoothing: antialiased;
+        }
         .header { text-align: center; margin-bottom: 20px; }
         .section { margin-bottom: 30px; }
         .section-title { 
@@ -39,15 +53,36 @@
     </div>
 
     <!-- Class & Admission Details Section -->
-    <div class="section">
-        <div class="section-title">Admission Details</div>
-        <p><strong>Form No:</strong> <?= htmlspecialchars($student['form_no'] ?? '') ?></p>
-        <p><strong>Class Roll No:</strong> <?= htmlspecialchars($student['class_roll_no'] ?? '') ?></p>
-        <p><strong>ID Card No:</strong> <?= htmlspecialchars($student['id_card_no'] ?? '') ?></p>
-        <p><strong>Class Sought:</strong> <?= htmlspecialchars($student['class_sought'] ?? '') ?></p>
-        <p><strong>Medium:</strong> <?= htmlspecialchars($student['medium_of_instruction'] ?? '') ?></p>
-        <p><strong>Category:</strong> <?= htmlspecialchars($student['category'] ?? '') ?></p>
+   <div class="section container">
+    <div class="section-title h5 mb-3">Admission Details</div>
+
+    <!-- First Row -->
+    <div class="row mb-2">
+        <div class="col-md-4">
+            <p><strong>Form No:</strong> <?= htmlspecialchars($student['form_no'] ?? '') ?></p>
+        </div>
+        <div class="col-md-4">
+            <p><strong>Class Roll No:</strong> <?= htmlspecialchars($student['class_roll_no'] ?? '') ?></p>
+        </div>
+        <div class="col-md-4">
+            <p><strong>ID Card No:</strong> <?= htmlspecialchars($student['id_card_no'] ?? '') ?></p>
+        </div>
     </div>
+
+    <!-- Second Row -->
+    <div class="row">
+        <div class="col-md-4">
+            <p><strong>Class Sought:</strong> <?= htmlspecialchars($student['class_sought'] ?? '') ?></p>
+        </div>
+        <div class="col-md-4">
+            <p><strong>Medium:</strong> <?= htmlspecialchars($student['medium_of_instruction'] ?? '') ?></p>
+        </div>
+        <div class="col-md-4">
+            <p><strong>Category:</strong> <?= htmlspecialchars($student['category'] ?? '') ?></p>
+        </div>
+    </div>
+</div>
+
 
     <!-- Student Details Section -->
     <div class="section">

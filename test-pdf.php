@@ -81,13 +81,11 @@ function generatePdf($formNo, $download = false) {
         $student['enclosure'.($i+1)] = $docs[$i]['document_name'] ?? '';
     }
     
-    // Generate PDF
-    // Use Unicode font for Hindi support
+    // Generate PDF with UTF-8 and Hindi support
     $options = new Options();
     $options->set('isHtml5ParserEnabled', true);
     $options->set('isRemoteEnabled', true);
-    $options->set('defaultFont', 'Noto Sans Devanagari');
-    
+    $options->set('defaultFont', 'DejaVu Sans');
     $dompdf = new Dompdf($options);
     
     // Start output buffering
@@ -95,8 +93,38 @@ function generatePdf($formNo, $download = false) {
     include 'pdf-template.php';
     $html = ob_get_clean();
     
+    // Ensure proper UTF-8 encoding
+    $html = mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8');
+    
+    // Clean (end) all output buffers before streaming PDF
+    while (ob_get_level() > 0) {
+        ob_end_clean();
+    }
+
+    try {
+        // Add proper HTML structure with CSS for the font
+        $html = '<!DOCTYPE html>
+    <html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+        <style>
+            body {
+                font-family: "Noto Sans Devanagari", sans-serif;
+                direction: ltr;
+            }
+        </style>
+    </head>
+    <body>' . $html . '</body></html>';
+    
     $dompdf->loadHtml($html);
     $dompdf->setPaper('A4', 'portrait');
+    
+    // Set PDF rendering options
+    $dompdf->set_option('isRemoteEnabled', true);
+    $dompdf->set_option('isHtml5ParserEnabled', true);
+    $dompdf->set_option('isPhpEnabled', true);
+    $dompdf->set_option('defaultFont', 'Noto Sans Devanagari');
+    
     $dompdf->render();
     
     if ($download) {
@@ -105,6 +133,13 @@ function generatePdf($formNo, $download = false) {
     } else {
         // Show in browser
         $dompdf->stream("application_{$formNo}.pdf", ["Attachment" => false]);
+    }
+    } catch (Throwable $e) {
+        // Log error to a file
+        file_put_contents(__DIR__ . '/pdf_error.log', date('c') . ' ' . $e->getMessage() . "\n", FILE_APPEND);
+        header('Content-Type: text/plain; charset=utf-8');
+        http_response_code(500);
+        echo "PDF generation failed. Please check pdf_error.log for details.";
     }
     exit;
 }
