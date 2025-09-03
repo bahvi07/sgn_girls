@@ -38,15 +38,122 @@
         <p>Form No: <?= htmlspecialchars($student['form_no'] ?? '') ?></p>
     </div>
 
+    <!-- Class & Admission Details Section -->
+    <div class="section">
+        <div class="section-title">Admission Details</div>
+        <p><strong>Form No:</strong> <?= htmlspecialchars($student['form_no'] ?? '') ?></p>
+        <p><strong>Class Roll No:</strong> <?= htmlspecialchars($student['class_roll_no'] ?? '') ?></p>
+        <p><strong>ID Card No:</strong> <?= htmlspecialchars($student['id_card_no'] ?? '') ?></p>
+        <p><strong>Class Sought:</strong> <?= htmlspecialchars($student['class_sought'] ?? '') ?></p>
+        <p><strong>Medium:</strong> <?= htmlspecialchars($student['medium_of_instruction'] ?? '') ?></p>
+        <p><strong>Category:</strong> <?= htmlspecialchars($student['category'] ?? '') ?></p>
+    </div>
+
     <!-- Student Details Section -->
     <div class="section">
         <div class="section-title">Personal Information</div>
-        <p><strong>Name:</strong> <?= htmlspecialchars($student['applicant_name_english'] ?? '') ?></p>
+        <p><strong>Name (English):</strong> <?= htmlspecialchars($student['applicant_name_english'] ?? '') ?></p>
+        <p><strong>Name (Hindi):</strong> <?= htmlspecialchars($student['applicant_name_hindi'] ?? '') ?></p>
+        <p><strong>Gender:</strong> <?= htmlspecialchars($student['gender'] ?? '') ?></p>
         <p><strong>Date of Birth:</strong> <?= htmlspecialchars($student['date_of_birth'] ?? '') ?></p>
-        <!-- Add more student details as needed -->
+        <p><strong>Photo:</strong> <?= !empty($student['applicant_photo_path']) ? 'Attached' : 'Not Provided' ?></p>
     </div>
 
-    <!-- Add other sections like Contact Details, Educational Qualifications, etc. -->
+    <!-- Family Details Section -->
+    <div class="section">
+        <div class="section-title">Family Details</div>
+        <p><strong>Father's Name (English):</strong> <?= htmlspecialchars($student['father_name_english'] ?? '') ?></p>
+        <p><strong>Father's Name (Hindi):</strong> <?= htmlspecialchars($student['father_name_hindi'] ?? '') ?></p>
+        <p><strong>Father's Occupation:</strong> <?= htmlspecialchars($student['father_occupation'] ?? '') ?></p>
+        <p><strong>Mother's Name (English):</strong> <?= htmlspecialchars($student['mother_name_english'] ?? '') ?></p>
+        <p><strong>Mother's Name (Hindi):</strong> <?= htmlspecialchars($student['mother_name_hindi'] ?? '') ?></p>
+        <p><strong>Mother's Occupation:</strong> <?= htmlspecialchars($student['mother_occupation'] ?? '') ?></p>
+        <p><strong>Guardian's Name (English):</strong> <?= htmlspecialchars($student['guardian_name_english'] ?? '') ?></p>
+        <p><strong>Guardian's Name (Hindi):</strong> <?= htmlspecialchars($student['guardian_name_hindi'] ?? '') ?></p>
+        <p><strong>Guardian's Occupation:</strong> <?= htmlspecialchars($student['guardian_occupation'] ?? '') ?></p>
+        <p><strong>Guardian's Relation:</strong> <?= htmlspecialchars($student['guardian_relation'] ?? '') ?></p>
+    </div>
+
+    <!-- Contact Details Section -->
+    <div class="section">
+        <div class="section-title">Contact Details</div>
+        <p><strong>Permanent Address:</strong> <?= htmlspecialchars($student['permanent_address'] ?? '') ?></p>
+        <p><strong>PIN Code:</strong> <?= htmlspecialchars($student['pincode'] ?? '') ?></p>
+        <p><strong>Mobile Number:</strong> <?= htmlspecialchars($student['mobile_number'] ?? '') ?></p>
+        <p><strong>WhatsApp Number:</strong> <?= htmlspecialchars($student['whatsapp_number'] ?? '') ?></p>
+        <p><strong>Email:</strong> <?= htmlspecialchars($student['email'] ?? '') ?></p>
+        <p><strong>Aadhar Number:</strong> <?= htmlspecialchars($student['aadhar_number'] ?? '') ?></p>
+        <p><strong>Blood Group:</strong> <?= htmlspecialchars($student['blood_group'] ?? '') ?></p>
+    </div>
+
+    <!-- Educational Qualifications Section -->
+    <div class="section">
+        <div class="section-title">Educational Qualifications</div>
+        <?php if (!empty($student['qualifications'])): ?>
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                <thead>
+                    <tr style="background-color: #f8f9fa;">
+                        <th style="border: 1px solid #ddd; padding: 8px;">Exam</th>
+                        <th style="border: 1px solid #ddd; padding: 8px;">Roll No</th>
+                        <th style="border: 1px solid #ddd; padding: 8px;">Year</th>
+                        <th style="border: 1px solid #ddd; padding: 8px;">Board/University</th>
+                        <th style="border: 1px solid #ddd; padding: 8px;">Max Marks</th>
+                        <th style="border: 1px solid #ddd; padding: 8px;">Marks Obtained</th>
+                        <th style="border: 1px solid #ddd; padding: 8px;">Percentage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($student['qualifications'] as $qual): ?>
+                        <tr>
+                            <td style="border: 1px solid #ddd; padding: 8px;"><?= htmlspecialchars($qual['exam_type'] ?? '') ?></td>
+                            <td style="border: 1px solid #ddd; padding: 8px;"><?= htmlspecialchars($qual['roll_no'] ?? '') ?></td>
+                            <td style="border: 1px solid #ddd; padding: 8px;"><?= htmlspecialchars($qual['year'] ?? '') ?></td>
+                            <td style="border: 1px solid #ddd; padding: 8px;"><?= htmlspecialchars($qual['university'] ?? '') ?></td>
+                            <td style="border: 1px solid #ddd; padding: 8px; text-align: right;"><?= htmlspecialchars($qual['max_marks'] ?? '') ?></td>
+                            <td style="border: 1px solid #ddd; padding: 8px; text-align: right;"><?= htmlspecialchars($qual['marks_obtained'] ?? '') ?></td>
+                            <td style="border: 1px solid #ddd; padding: 8px; text-align: right;"><?= htmlspecialchars($qual['percentage'] ?? '') ?>%</td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php else: ?>
+            <p>No educational qualifications provided.</p>
+        <?php endif; ?>
+        
+        <?php if (!empty($student['institution_last_attended'])): ?>
+            <p><strong>Institution Last Attended:</strong> <?= htmlspecialchars($student['institution_last_attended']) ?></p>
+        <?php endif; ?>
+    </div>
+
+    <!-- Document List Section -->
+    <?php if (!empty($student['document_list'])): ?>
+    <div class="section">
+        <div class="section-title">Required Documents</div>
+        <div style="white-space: pre-line;"><?= nl2br(htmlspecialchars($student['document_list'])) ?></div>
+    </div>
+    <?php endif; ?>
+
+    <!-- Service Info -->
+    <div class="section">
+        <div class="section-title">Service Information</div>
+        <p><strong>Are you in service?:</strong> <?= htmlspecialchars($student['in_service'] ?? '') ?></p>
+    </div>
+
+    <!-- Hobbies -->
+    <div class="section">
+        <div class="section-title">Hobbies</div>
+        <p><strong>Hobbies/Interests:</strong> <?= htmlspecialchars($student['hobbies_interests'] ?? '') ?></p>
+        <p><strong>Hobbies Details:</strong> <?= htmlspecialchars($student['hobbies_details'] ?? '') ?></p>
+    </div>
+
+    <!-- Enclosures -->
+    <div class="section">
+        <div class="section-title">Enclosures</div>
+        <p><strong>Document 1:</strong> <?= htmlspecialchars($student['enclosure1'] ?? '') ?></p>
+        <p><strong>Document 2:</strong> <?= htmlspecialchars($student['enclosure2'] ?? '') ?></p>
+        <p><strong>Document 3:</strong> <?= htmlspecialchars($student['enclosure3'] ?? '') ?></p>
+        <p><strong>Document 4:</strong> <?= htmlspecialchars($student['enclosure4'] ?? '') ?></p>
+    </div>
 
     <!-- Declaration Section -->
     <div class="section" style="page-break-before: always;">

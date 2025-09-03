@@ -38,10 +38,55 @@ function generatePdf($formNo, $download = false) {
         die("No application found with form number: " . htmlspecialchars($formNo));
     }
     
+    // Fetch family details
+    $stmt = $conn->prepare("SELECT * FROM family_details WHERE student_id = ?");
+    $stmt->bind_param("i", $student['student_id']);
+    $stmt->execute();
+    $family = $stmt->get_result()->fetch_assoc();
+    if ($family) $student = array_merge($student, $family);
+    
+    // Fetch contact details
+    $stmt = $conn->prepare("SELECT * FROM contact_details WHERE student_id = ?");
+    $stmt->bind_param("i", $student['student_id']);
+    $stmt->execute();
+    $contact = $stmt->get_result()->fetch_assoc();
+    if ($contact) $student = array_merge($student, $contact);
+    
+    // Fetch educational qualifications
+    $stmt = $conn->prepare("SELECT * FROM educational_qualifications WHERE student_id = ? ORDER BY year DESC");
+    $stmt->bind_param("i", $student['student_id']);
+    $stmt->execute();
+    $qualifications = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    $student['qualifications'] = $qualifications;
+    
+    // Map education fields for template compatibility with old field names
+    if (!empty($qualifications[0])) {
+        $edu = $qualifications[0];
+        $student['exam_name'] = $edu['exam_type'] ?? '';
+        $student['roll'] = $edu['roll_no'] ?? '';
+        $student['year'] = $edu['year'] ?? '';
+        $student['univ'] = $edu['university'] ?? '';
+        $student['max'] = $edu['max_marks'] ?? '';
+        $student['marks'] = $edu['marks_obtained'] ?? '';
+        $student['percent'] = $edu['percentage'] ?? '';
+        $student['institude'] = $student['institution_last_attended'] ?? '';
+    }
+    
+    // Fetch enclosures/documents (as array)
+    $stmt = $conn->prepare("SELECT document_name FROM documents WHERE student_id = ? ORDER BY id ASC");
+    $stmt->bind_param("i", $student['student_id']);
+    $stmt->execute();
+    $docs = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    for ($i = 0; $i < 4; $i++) {
+        $student['enclosure'.($i+1)] = $docs[$i]['document_name'] ?? '';
+    }
+    
     // Generate PDF
+    // Use Unicode font for Hindi support
     $options = new Options();
     $options->set('isHtml5ParserEnabled', true);
     $options->set('isRemoteEnabled', true);
+    $options->set('defaultFont', 'Noto Sans Devanagari');
     
     $dompdf = new Dompdf($options);
     

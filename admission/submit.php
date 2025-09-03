@@ -43,13 +43,14 @@ try {
         }
     }
     
-    // 3. Insert into students table
+    // 1. Insert into students table
     $stmt = $conn->prepare("
         INSERT INTO students (
             form_no, class_sought, class_roll_no, id_card_no, medium_of_instruction,
             applicant_name_english, applicant_name_hindi, gender, date_of_birth, 
-            category, applicant_photo_path, blood_group, hobbies_interests
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            category, applicant_photo_path, blood_group, hobbies_interests,
+            document_list, institution_last_attended, in_service
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ");
     
     // Create variables for binding
@@ -64,9 +65,12 @@ try {
     $category = $_POST['category'] ?? 'General';
     $blood_group = $_POST['blood_group'] ?? null;
     $hobbies_interests = $_POST['hobbies_interests'] ?? null;
+    $document_list = $_POST['document_list'] ?? null;
+    $institution_last_attended = $_POST['institution_last_attended'] ?? null;
+    $in_service = $_POST['in_service'] ?? 'No';
     
     $stmt->bind_param(
-        "sssssssssssss",
+        "ssssssssssssssss",
         $form_no,
         $class_sought,
         $class_roll_no,
@@ -79,7 +83,10 @@ try {
         $category,
         $photoPath,
         $blood_group,
-        $hobbies_interests
+        $hobbies_interests,
+        $document_list,
+        $institution_last_attended,
+        $in_service
     );
     
     if (!$stmt->execute()) {
@@ -166,30 +173,56 @@ try {
     }
     $stmt->close();
 
-    // 5. Insert educational qualifications if provided
-    if (!empty($_POST['qualifications'])) {
+    // 5. Insert educational qualifications
+    if (!empty($_POST['marks']) && is_array($_POST['marks'])) {
         $stmt = $conn->prepare("
             INSERT INTO educational_qualifications (
-                student_id, qualification_type, board_university, institution_name,
-                passing_year, percentage, division, subject
+                student_id, exam_type, roll_no, year, university,
+                max_marks, marks_obtained, percentage
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         ");
-        
-        foreach ($_POST['qualifications'] as $qual) {
-            $stmt->bind_param(
-                "issssdss",
-                $studentId,
-                $qual['type'],
-                $qual['board'],
-                $qual['institution'],
-                $qual['year'],
-                $qual['percentage'] ?? null,
-                $qual['division'] ?? null,
-                $qual['subject'] ?? null
-            );
-            
+        foreach ($_POST['marks'] as $mark) {
+            if (!empty($mark['exam_type']) && !empty($mark['year'])) {
+                $examType = $mark['exam_type'] ?? '';
+                $rollNo = $mark['roll_no'] ?? '';
+                $year = $mark['year'] ?? 0;
+                $university = $mark['university'] ?? '';
+                $maxMarks = $mark['max_marks'] ?? 0;
+                $marksObtained = $mark['marks_obtained'] ?? 0;
+                $percentage = $mark['percentage'] ?? 0;
+                $stmt->bind_param(
+                    "issisddd",
+                    $studentId,
+                    $examType,
+                    $rollNo,
+                    $year,
+                    $university,
+                    $maxMarks,
+                    $marksObtained,
+                    $percentage
+                );
+                if (!$stmt->execute()) {
+                    throw new Exception("Failed to save educational qualification: " . $stmt->error);
+                }
+            }
+        }
+        $stmt->close();
+    }
+
+    // 8. Store enclosure/document names (no file upload)
+    $enclosures = [];
+    for ($i = 1; $i <= 4; $i++) {
+        $enc = trim($_POST['enclosure' . $i] ?? '');
+        if ($enc !== '') {
+            $enclosures[] = $enc;
+        }
+    }
+    if (!empty($enclosures)) {
+        $stmt = $conn->prepare("INSERT INTO documents (student_id, document_name) VALUES (?, ?)");
+        foreach ($enclosures as $docName) {
+            $stmt->bind_param("is", $studentId, $docName);
             if (!$stmt->execute()) {
-                throw new Exception("Failed to save educational qualification: " . $stmt->error);
+                throw new Exception("Failed to save document record: " . $stmt->error);
             }
         }
         $stmt->close();
@@ -216,36 +249,6 @@ try {
         throw new Exception("Failed to update application status: " . $stmt->error);
     }
     $stmt->close();
-
-    // 8. Handle document uploads if any
-    if (!empty($_FILES['documents'])) {
-        $stmt = $conn->prepare("
-            INSERT INTO documents (student_id, document_type, document_path)
-            VALUES (?, ?, ?)
-        ");
-        
-        foreach ($_FILES['documents']['tmp_name'] as $key => $tmpName) {
-            if ($_FILES['documents']['error'][$key] === UPLOAD_ERR_OK) {
-                $targetDir = "../uploads/documents/";
-                if (!is_dir($targetDir)) {
-                    mkdir($targetDir, 0777, true);
-                }
-                
-                $fileName = uniqid('doc_', true) . '_' . basename($_FILES['documents']['name'][$key]);
-                $targetFile = $targetDir . $fileName;
-                
-                if (move_uploaded_file($tmpName, $targetFile)) {
-                    $docType = $_FILES['documents']['type'][$key];
-                    $stmt->bind_param("iss", $studentId, $docType, $fileName);
-                    
-                    if (!$stmt->execute()) {
-                        throw new Exception("Failed to save document record: " . $stmt->error);
-                    }
-                }
-            }
-        }
-        $stmt->close();
-    }
 
     // 9. Generate PDF (simplified example)
     $options = new Options();

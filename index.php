@@ -37,15 +37,15 @@ $form_no = 'S.No.' . time(); ?>
         <div class="row g-3">
             <div class="col-md-3">
             <label class="form-label">Class to which admission is sought</label>
-            <input type="text" class="form-control char-only" placeholder=""  name="class_sought" >
+            <input type="text" class="form-control " placeholder=""  name="class_sought" >
           </div>
           <div class="col-md-3">
             <label class="form-label ">Class Roll No</label>
-            <input type="text" class="form-control num-only" placeholder=""  name="class_roll_no">
+            <input type="text" class="form-control" placeholder=""  name="class_roll_no">
           </div>
           <div class="col-md-3">
             <label class="form-label">ID Card No</label>
-            <input type="text" class="form-control char-only" placeholder="(optional)"  name="id_card_no" >
+            <input type="text" class="form-control " placeholder="(optional)"  name="id_card_no" >
           </div>
           <div class="col-md-3">
             <label class="form-label required-field">Medium</label>
@@ -206,7 +206,7 @@ $form_no = 'S.No.' . time(); ?>
         </div>
       
        <div class="form-section">
-        <div class="section-title"><i class="fas fa-book"></i> 5. Details of marks obtained in the qualifying examination  </div>
+        <div class="section-title"><i class="fas fa-book"></i> 5. Details of marks obtained in the qualifying examination</div>
         <div class="table-responsive">
           <table class="table table-bordered">
             <thead class="table-light">
@@ -222,31 +222,13 @@ $form_no = 'S.No.' . time(); ?>
             </thead>
             <tbody>
               <tr>
-                <td>Part I</td>
-                <td><input type="text" class="form-control" name="roll1"></td>
-                <td><input type="text" class="form-control" name="year1"></td>
-                <td><input type="text" class="form-control" name="univ1"></td>
-                <td><input type="text" class="form-control" name="max1"></td>
-                <td><input type="text" class="form-control" name="marks1"></td>
-                <td><input type="text" class="form-control" name="percent1"></td>
-              </tr>
-              <tr>
-                <td>Part II</td>
-                <td><input type="text" class="form-control" name="roll2"></td>
-                <td><input type="text" class="form-control" name="year2"></td>
-                <td><input type="text" class="form-control" name="univ2"></td>
-                <td><input type="text" class="form-control" name="max2"></td>
-                <td><input type="text" class="form-control" name="marks2"></td>
-                <td><input type="text" class="form-control" name="percent2"></td>
-              </tr>
-              <tr>
-                <td>Part III</td>
-                <td><input type="text" class="form-control" name="roll3"></td>
-                <td><input type="text" class="form-control" name="year3"></td>
-                <td><input type="text" class="form-control" name="univ3"></td>
-                <td><input type="text" class="form-control" name="max3"></td>
-                <td><input type="text" class="form-control" name="marks3"></td>
-                <td><input type="text" class="form-control" name="percent3"></td>
+                <td><input type="text" class="form-control" name="marks[0][exam_type]" placeholder="e.g. 12th, Graduation, etc." required></td>
+                <td><input type="text" class="form-control" name="marks[0][roll_no]" required></td>
+                <td><input type="text" class="form-control" name="marks[0][year]" required></td>
+                <td><input type="text" class="form-control" name="marks[0][university]" required></td>
+                <td><input type="text" class="form-control" name="marks[0][max_marks]" required></td>
+                <td><input type="text" class="form-control" name="marks[0][marks_obtained]" required></td>
+                <td><input type="text" class="form-control" name="marks[0][percentage]" required></td>
               </tr>
             </tbody>
           </table>

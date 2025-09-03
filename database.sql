@@ -21,6 +21,9 @@ CREATE TABLE students (
     applicant_photo_path VARCHAR(255),
     blood_group VARCHAR(10),
     hobbies_interests TEXT,
+    document_list TEXT,
+    institution_last_attended VARCHAR(255),
+    in_service ENUM('Yes', 'No'),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
@@ -65,13 +68,13 @@ CREATE TABLE contact_details (
 CREATE TABLE educational_qualifications (
     id INT AUTO_INCREMENT PRIMARY KEY,
     student_id INT NOT NULL,
-    qualification_type ENUM('10th', '12th', 'Graduation', 'Post Graduation', 'Other') NOT NULL,
-    board_university VARCHAR(255) NOT NULL,
-    institution_name VARCHAR(255) NOT NULL,
-    passing_year YEAR NOT NULL,
+    exam_type VARCHAR(100) NOT NULL,
+    roll_no VARCHAR(50),
+    year INT NOT NULL,
+    university VARCHAR(255) NOT NULL,
+    max_marks DECIMAL(10,2),
+    marks_obtained DECIMAL(10,2),
     percentage DECIMAL(5,2),
-    division VARCHAR(20),
-    subject VARCHAR(100),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE
 );
@@ -80,8 +83,7 @@ CREATE TABLE educational_qualifications (
 CREATE TABLE documents (
     id INT AUTO_INCREMENT PRIMARY KEY,
     student_id INT NOT NULL,
-    document_type VARCHAR(100) NOT NULL,
-    document_path VARCHAR(255) NOT NULL,
+    document_name VARCHAR(255) NOT NULL,
     uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE
 );
