@@ -41,85 +41,168 @@
         .mb-4 { margin-bottom: 1.5rem; }
         .mt-4 { margin-top: 1.5rem; }
         .declaration { font-size: 11px; text-align: justify; }
+        .photo-box {
+        border: 1px solid black;
+        width: 100px;
+        height: 100px;
+        float: right;
+        position: relative;
+        top: -100px;
+    }
+
+    .photo-img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+
+    .header {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .header h2, .header h4 {
+        margin: 0;
+    }
+
+    .header p {
+        margin: 5px 0;
+    }
     </style>
 </head>
 <body>
     <!-- Header -->
     <div class="header">
-        <h2>Sri Guru Nanak Khalsa Law (P.G.) College</h2>
-         <p>SRI GANGANAGAR - 335001 (RAJ.)</p>
-        <h4>Application Form</h4>
-        <p>Form No: <?= htmlspecialchars($student['form_no'] ?? '') ?></p>
+    <h2>Sri Guru Nanak Khalsa Law (P.G.) College</h2>
+    <p>SRI GANGANAGAR - 335001 (RAJ.)</p>
+    <h4>Application Form</h4>
+    <p>Form No: <?= htmlspecialchars($student['form_no'] ?? '') ?></p>
+     <!-- Photo Box -->
+ <div class="photo-box">
+    
+        <img src="<?= $student['applicant_photo_path'] ?>" alt="Applicant Photo" class="photo-img">
+        
     </div>
+</div>
+
 
     <!-- Class & Admission Details Section -->
-   <div class="section container">
+    <div class="section">
     <div class="section-title h5 mb-3">Admission Details</div>
-
-    <!-- First Row -->
-    <div class="row mb-2">
-        <div class="col-md-4">
-            <p><strong>Form No:</strong> <?= htmlspecialchars($student['form_no'] ?? '') ?></p>
-        </div>
-        <div class="col-md-4">
-            <p><strong>Class Roll No:</strong> <?= htmlspecialchars($student['class_roll_no'] ?? '') ?></p>
-        </div>
-        <div class="col-md-4">
-            <p><strong>ID Card No:</strong> <?= htmlspecialchars($student['id_card_no'] ?? '') ?></p>
-        </div>
-    </div>
-
-    <!-- Second Row -->
-    <div class="row">
-        <div class="col-md-4">
-            <p><strong>Class Sought:</strong> <?= htmlspecialchars($student['class_sought'] ?? '') ?></p>
-        </div>
-        <div class="col-md-4">
-            <p><strong>Medium:</strong> <?= htmlspecialchars($student['medium_of_instruction'] ?? '') ?></p>
-        </div>
-        <div class="col-md-4">
-            <p><strong>Category:</strong> <?= htmlspecialchars($student['category'] ?? '') ?></p>
-        </div>
-    </div>
+    <table class="table table-bordered" style="width: 100%; font-size: 14px;">
+        <tr>
+            <td><strong>Form No:</strong></td>
+            <td><?= htmlspecialchars($student['form_no'] ?? '') ?></td>
+            <td><strong>Class Roll No:</strong></td>
+            <td><?= htmlspecialchars($student['class_roll_no'] ?? '') ?></td>
+        </tr>
+        <tr>
+            <td><strong>ID Card No:</strong></td>
+            <td><?= htmlspecialchars($student['id_card_no'] ?? '') ?></td>
+            <td><strong>Class Sought:</strong></td>
+            <td><?= htmlspecialchars($student['class_sought'] ?? '') ?></td>
+        </tr>
+        <tr>
+            <td><strong>Medium:</strong></td>
+            <td><?= htmlspecialchars($student['medium_of_instruction'] ?? '') ?></td>
+        </tr>
+    </table>
 </div>
 
 
     <!-- Student Details Section -->
     <div class="section">
-        <div class="section-title">Personal Information</div>
-        <p><strong>Name (English):</strong> <?= htmlspecialchars($student['applicant_name_english'] ?? '') ?></p>
-        <p><strong>Name (Hindi):</strong> <?= htmlspecialchars($student['applicant_name_hindi'] ?? '') ?></p>
-        <p><strong>Gender:</strong> <?= htmlspecialchars($student['gender'] ?? '') ?></p>
-        <p><strong>Date of Birth:</strong> <?= htmlspecialchars($student['date_of_birth'] ?? '') ?></p>
-        <p><strong>Photo:</strong> <?= !empty($student['applicant_photo_path']) ? 'Attached' : 'Not Provided' ?></p>
-    </div>
+    <div class="section-title h5 mb-3">Personal Information</div>
+    <table class="table table-bordered" style="width: 100%; font-size: 14px;">
+        <tr>
+            <td><strong>Name (English):</strong></td>
+            <td><?= htmlspecialchars($student['applicant_name_english'] ?? '') ?></td>
+            <td><strong>Name (Hindi):</strong></td>
+            <td><?= htmlspecialchars($student['applicant_name_hindi'] ?? '') ?></td>
+        </tr>
+        <tr>
+            <td><strong>Gender:</strong></td>
+            <td><?= htmlspecialchars($student['gender'] ?? '') ?></td>
+            <td><strong>Date of Birth:</strong></td>
+            <td><?= htmlspecialchars($student['date_of_birth'] ?? '') ?></td>
+        </tr>
+        <tr>
+            <td><strong>Category:</strong></td>
+            <td><?= htmlspecialchars($student['category'] ?? '') ?></td>
+            <td><strong>Blood Group:</strong></td>
+            <td><?= htmlspecialchars($student['blood_group'] ?? '') ?></td>
+        </tr>
+    </table>
+</div>
+
 
     <!-- Family Details Section -->
     <div class="section">
-        <div class="section-title">Family Details</div>
-        <p><strong>Father's Name (English):</strong> <?= htmlspecialchars($student['father_name_english'] ?? '') ?></p>
-        <p><strong>Father's Name (Hindi):</strong> <?= htmlspecialchars($student['father_name_hindi'] ?? '') ?></p>
-        <p><strong>Father's Occupation:</strong> <?= htmlspecialchars($student['father_occupation'] ?? '') ?></p>
-        <p><strong>Mother's Name (English):</strong> <?= htmlspecialchars($student['mother_name_english'] ?? '') ?></p>
-        <p><strong>Mother's Name (Hindi):</strong> <?= htmlspecialchars($student['mother_name_hindi'] ?? '') ?></p>
-        <p><strong>Mother's Occupation:</strong> <?= htmlspecialchars($student['mother_occupation'] ?? '') ?></p>
-        <p><strong>Guardian's Name (English):</strong> <?= htmlspecialchars($student['guardian_name_english'] ?? '') ?></p>
-        <p><strong>Guardian's Name (Hindi):</strong> <?= htmlspecialchars($student['guardian_name_hindi'] ?? '') ?></p>
-        <p><strong>Guardian's Occupation:</strong> <?= htmlspecialchars($student['guardian_occupation'] ?? '') ?></p>
-        <p><strong>Guardian's Relation:</strong> <?= htmlspecialchars($student['guardian_relation'] ?? '') ?></p>
-    </div>
+    <div class="section-title h5 mb-3">Family Details</div>
+    <table style="width: 100%;  font-size: 14px;"  cellpadding="5">
+        <tr>
+            <td><strong>Father's Name (English):</strong></td>
+            <td><strong>Father's Name (Hindi):</strong></td>
+            <td><strong>Father's Occupation:</strong></td>
+        </tr>
+        <tr>
+            <td><?= htmlspecialchars($student['father_name_english'] ?? '') ?></td>
+            <td><?= htmlspecialchars($student['father_name_hindi'] ?? '') ?></td>
+            <td><?= htmlspecialchars($student['father_occupation'] ?? '') ?></td>
+        </tr>
+        <tr>
+            <td><strong>Mother's Name (English):</strong></td>
+            <td><strong>Mother's Name (Hindi):</strong></td>
+            <td><strong>Mother's Occupation:</strong></td>
+        </tr>
+        <tr>
+            <td><?= htmlspecialchars($student['mother_name_english'] ?? '') ?></td>
+            <td><?= htmlspecialchars($student['mother_name_hindi'] ?? '') ?></td>
+            <td><?= htmlspecialchars($student['mother_occupation'] ?? '') ?></td>
+        </tr>
+        <td colspan="3" class="section-title h5 mb-3">Guardian Details (if different from parents)</td>
+        <tr>
+            <td><strong>Guardian's Name (English):</strong></td>
+            <td><strong>Guardian's Name (Hindi):</strong></td>
+            <td><strong>Guardian's Occupation:</strong></td>
+        </tr>
+       
+        <tr>
+            <td><?= htmlspecialchars($student['guardian_name_english'] ?? '') ?></td>
+            <td><?= htmlspecialchars($student['guardian_name_hindi'] ?? '') ?></td>
+            <td><?= htmlspecialchars($student['guardian_occupation'] ?? '') ?></td>
+        </tr>
+    </table>
+</div>
+
 
     <!-- Contact Details Section -->
     <div class="section">
-        <div class="section-title">Contact Details</div>
-        <p><strong>Permanent Address:</strong> <?= htmlspecialchars($student['permanent_address'] ?? '') ?></p>
-        <p><strong>PIN Code:</strong> <?= htmlspecialchars($student['pincode'] ?? '') ?></p>
-        <p><strong>Mobile Number:</strong> <?= htmlspecialchars($student['mobile_number'] ?? '') ?></p>
-        <p><strong>WhatsApp Number:</strong> <?= htmlspecialchars($student['whatsapp_number'] ?? '') ?></p>
-        <p><strong>Email:</strong> <?= htmlspecialchars($student['email'] ?? '') ?></p>
-        <p><strong>Aadhar Number:</strong> <?= htmlspecialchars($student['aadhar_number'] ?? '') ?></p>
-        <p><strong>Blood Group:</strong> <?= htmlspecialchars($student['blood_group'] ?? '') ?></p>
-    </div>
+    <div class="section-title h5 mb-3">Contact Details</div>
+    <table style="width: 100%; border-collapse: collapse; font-size: 14px;" border="1" cellpadding="5">
+        <tr>
+            <td><strong>Permanent Address:</strong></td>
+            <td><strong>PIN Code:</strong></td>
+            <td><strong>Mobile Number:</strong></td>
+        </tr>
+        <tr>
+            <td><?= htmlspecialchars($student['permanent_address'] ?? '') ?></td>
+            <td><?= htmlspecialchars($student['pincode'] ?? '') ?></td>
+            <td><?= htmlspecialchars($student['mobile_number'] ?? '') ?></td>
+        </tr>
+        <tr>
+            <td><strong>WhatsApp Number:</strong></td>
+            <td><strong>Email:</strong></td>
+            <td><strong>Aadhar Number:</strong></td>
+        </tr>
+        <tr>
+            <td><?= htmlspecialchars($student['whatsapp_number'] ?? '') ?></td>
+            <td><?= htmlspecialchars($student['email'] ?? '') ?></td>
+            <td><?= htmlspecialchars($student['aadhar_number'] ?? '') ?></td>
+        </tr>
+    </table>
+</div>
+
 
     <!-- Educational Qualifications Section -->
     <div class="section">
@@ -176,22 +259,40 @@
 
     <!-- Hobbies -->
     <div class="section">
-        <div class="section-title">Hobbies</div>
-        <p><strong>Hobbies/Interests:</strong> <?= htmlspecialchars($student['hobbies_interests'] ?? '') ?></p>
-        <p><strong>Hobbies Details:</strong> <?= htmlspecialchars($student['hobbies_details'] ?? '') ?></p>
-    </div>
+    <div class="section-title h5 mb-3">Hobbies</div>
+    <table style="width: 100%; border-collapse: collapse; font-size: 14px;" border="1" cellpadding="5">
+        <tr>
+            <td style="width: 15%;"><strong>Hobbies/Interests:</strong></td>
+            <td colspan="2"><?= htmlspecialchars($student['hobbies_interests'] ?? '') ?></td>
+            <td style="width: 15%;"><strong>Hobbies Details:</strong></td>
+            <td colspan="2"><?= htmlspecialchars($student['hobbies_details'] ?? '') ?></td>
+        </tr>
+    </table>
+</div>
+
 
     <!-- Enclosures -->
     <div class="section">
-        <div class="section-title">Enclosures</div>
-        <p><strong>Document 1:</strong> <?= htmlspecialchars($student['enclosure1'] ?? '') ?></p>
-        <p><strong>Document 2:</strong> <?= htmlspecialchars($student['enclosure2'] ?? '') ?></p>
-        <p><strong>Document 3:</strong> <?= htmlspecialchars($student['enclosure3'] ?? '') ?></p>
-        <p><strong>Document 4:</strong> <?= htmlspecialchars($student['enclosure4'] ?? '') ?></p>
-    </div>
+    <div class="section-title h5 mb-3">Enclosures</div>
+    <table style="width: 100%; border-collapse: collapse; font-size: 14px;" border="1" cellpadding="5">
+        <tr>
+            <td><strong>Document 1:</strong></td>
+            <td><?= htmlspecialchars($student['enclosure1'] ?? '') ?></td>
+            <td><strong>Document 2:</strong></td>
+            <td><?= htmlspecialchars($student['enclosure2'] ?? '') ?></td>
+        </tr>
+        <tr>
+            <td><strong>Document 3:</strong></td>
+            <td><?= htmlspecialchars($student['enclosure3'] ?? '') ?></td>
+            <td><strong>Document 4:</strong></td>
+            <td><?= htmlspecialchars($student['enclosure4'] ?? '') ?></td>
+        </tr>
+    </table>
+</div>
+
 
     <!-- Declaration Section -->
-    <div class="section" style="page-break-before: always;">
+    <div class="section">
         <div class="section-title">DECLARATION</div>
         <div class="declaration">
             <ol>
@@ -216,7 +317,7 @@ for prompt payment of college dues. </li>
     <li>Admission is given subject to approval of <b> Dr. Bhimrao Ambedkar Law University, Jaipur</b> </li>
             </ol>
             
-            <div style="margin-top: 50px;">
+            <div style="margin-top: 20px;">
                 <div style="float: right; text-align: center;">
                     <div class="signature-line"></div><br>
                     <strong>Signature of Applicant</strong>
