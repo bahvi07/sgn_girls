@@ -3,8 +3,8 @@ $form_no = 'S.No.' . time(); ?>
 <div class="header">
   <div class="container">
     <div class="text-center">
-      <h2><i class="fas fa-graduation-cap"></i> Sri Guru Nanak Girls PG College</h2>
-      <p>Affiliated to Maharaja Ganga Singh University, Bikaner (Raj.)</p>
+      <h2><i class="fas fa-graduation-cap"></i> SRI GURU NANAK KHALSA LAW (P.G.) COLLEGE</h2>
+      <p>SRI GANGANAGAR - 335001 (RAJ.)</p>
       <h4>Admission Form <strong><?php echo $form_no; ?></strong>
       </h4>
     </div>
@@ -32,43 +32,28 @@ $form_no = 'S.No.' . time(); ?>
       <!-- 1. Class Details -->
       <div class="form-section">
         <div class="section-title">
-          <i class="fas fa-book-open"></i> 1. Class to Which Admission is Sought
+          <i class="fas fa-book-open"></i> 1. Class to Which Admission is Sought & Basic Details
         </div>
         <div class="row g-3">
-          <div class="col-md-3">
-            <label class="form-label required-field">Class</label>
-            <input type="text" class="form-control char-only" placeholder="e.g. B.A. I" required name="class" required>
+            <div class="col-md-3">
+            <label class="form-label">Class to which admission is sought</label>
+            <input type="text" class="form-control char-only" placeholder=""  name="class_sought" >
           </div>
           <div class="col-md-3">
-            <label class="form-label">Part</label>
-            <input type="tel" class="form-control num-only" placeholder="Part 1/2" maxlength="1" name="part" required>
+            <label class="form-label ">Class Roll No</label>
+            <input type="text" class="form-control num-only" placeholder=""  name="class_roll_no">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">ID Card No</label>
+            <input type="text" class="form-control char-only" placeholder="(optional)"  name="id_card_no" >
           </div>
           <div class="col-md-3">
             <label class="form-label required-field">Medium</label>
-            <select class="form-select" required name="medium" required>
+            <select class="form-select" required name="medium_of_instruction" required>
               <option value="" selected disabled>Select Medium</option>
               <option value="English">English</option>
               <option value="Hindi">Hindi</option>
             </select>
-          </div>
-          <div class="col-md-3">
-            <label class="form-label required-field">Faculty</label><br>
-            <div class="form-check form-check-inline">
-              <input class="form-check-input" type="radio" name="faculty" value="Arts" id="arts" required>
-              <label class="form-check-label" for="arts">Arts</label>
-            </div>
-            <div class="form-check form-check-inline">
-              <input class="form-check-input" type="radio" name="faculty" value="Science" id="science">
-              <label class="form-check-label" for="science">Science</label>
-            </div>
-            <div class="form-check form-check-inline">
-              <input class="form-check-input" type="radio" name="faculty" value="Commerce" id="commerce">
-              <label class="form-check-label" for="commerce">Commerce</label>
-            </div>
-            <div class="form-check form-check-inline">
-              <input class="form-check-input" type="radio" name="faculty" value="Computer" id="computer">
-              <label class="form-check-label" for="computer">Computer</label>
-            </div>
           </div>
         </div>
       </div>
@@ -76,39 +61,32 @@ $form_no = 'S.No.' . time(); ?>
       <!-- 2. Personal Details -->
       <div class="form-section">
         <div class="section-title">
-          <i class="fas fa-user-graduate"></i> 2. Personal Details
+          <i class="fas fa-user-graduate"></i> 2. Student Details
         </div>
         <div class="row g-3">
           <div class="col-md-6">
             <label class="form-label required-field">Name of Applicant (in English)</label>
-            <input type="text" class="form-control char-only" placeholder="Full Name" required name="applicant_name">
+            <input type="text" class="form-control char-only" placeholder="Full Name" required name="applicant_name_english">
           </div>
           <div class="col-md-6">
             <label class="form-label">Name of Applicant (in Hindi)</label>
-            <input type="text" class="form-control" placeholder="" name="hindi_name">
+            <input type="text" class="form-control" placeholder="" name="applicant_name_hindi">
           </div>
           <div class="col-md-6">
-            <label class="form-label required-field">Father's Name</label>
-            <input type="text" class="form-control char-only" placeholder="Father's Name" required name="father_name">
+            <label class="form-label required-field">Gender</label>
+            <select class="form-select" required name="gender">
+              <option value="" selected disabled>Select Gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
           </div>
           <div class="col-md-6">
-            <label class="form-label">Father's Occupation</label>
-            <input type="text" class="form-control char-only" placeholder="Occupation" name="f_occupation">
-          </div>
-          <div class="col-md-6">
-            <label class="form-label required-field">Mother's Name</label>
-            <input type="text" class="form-control char-only" placeholder="Mother's Name" required name="mother_name">
-          </div>
-          <div class="col-md-6">
-            <label class="form-label">Mother's Occupation</label>
-            <input type="text" class="form-control char-only" placeholder="Occupation" name="m_occupation">
-          </div>
-      <div class="col-md-6">
         <div class="row g-2">
           <!-- Date of Birth -->
           <div class="col-12 col-sm-6">
             <label class="form-label required-field">Date of Birth</label>
-            <input type="date" class="form-control" required name="dob">     
+            <input type="date" class="form-control" required name="date_of_birth">     
           </div>
           <!-- Category -->
           <div class="col-12 col-sm-6">
@@ -122,11 +100,8 @@ $form_no = 'S.No.' . time(); ?>
               <option>Other</option>
             </select>
           </div>
-          <!-- Aadhar Number -->
-          <div class="col-12">
-            <label class="form-label required-field">Aadhar Number</label>
-            <input type="tel" maxlength="12" class="form-control num-only" placeholder="12-digit Aadhar" pattern="[0-9]{12}" required name="aadhar">
-          </div>
+      
+         
         </div>
       </div>
        <div class="col-md-6">
@@ -136,195 +111,246 @@ $form_no = 'S.No.' . time(); ?>
                 <i class="fas fa-camera fa-2x mb-2"></i>
                 <p class="mb-1">Click to upload photo</p>
                 <small class="text-muted">(Max 2MB, JPG/PNG)</small>
-                <input type="file" class="file-upload-input" accept="image/*" required name="photo">
+                <input type="file" class="file-upload-input" accept="image/*" required name="applicant_photo">
                 <span class="file-name text-primary mt-2" style="display:block;font-size:0.95em;"></span>
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      <!-- 3. Contact Details -->
-      <div class="form-section">
-        <div class="section-title">
-          <i class="fas fa-address-book"></i> 3. Contact Details
-        </div>
-        <div class="mb-3">
-          <label class="form-label required-field">Permanent Address</label>
-          <textarea class="form-control" rows="3" placeholder="Full address with PIN code" required id="perm" name="perm_address"></textarea>
-        </div>
-        <div class="form-check mb-3">
-          <input class="form-check-input" type="checkbox" id="sameAddress" name="same_address">
-          <label class="form-check-label" for="sameAddress">Same as permanent address</label>
-        </div>
-        <div class="mb-3" id="localAddressField">
-          <label class="form-label">Local Address (if different)</label>
-          <textarea class="form-control" rows="3" placeholder="Local address details" id="local" name="local_address"></textarea>
+<div class="form-section">
+   <div class="section-title">
+          <i class="fas fa-user-graduate"></i> 3. Family Details
         </div>
         <div class="row g-3">
-          <div class="col-md-6">
-            <label class="form-label required-field">Phone / Mobile</label>
-            <input type="tel" class="form-control num-only" placeholder="With STD code" required name="phone">
+          <div class="col-md-4">
+            <label class="form-label required-field">Father's Name</label>
+            <input type="text" class="form-control char-only" placeholder="Father's Name" required name="father_name_english">
           </div>
-          <div class="col-md-6">
-            <label class="form-label">Email</label>
+          <div class="col-md-4">
+            <label class="form-label required-field">Father's Name (in Hindi)</label>
+            <input type="text" class="form-control" placeholder="Father's Name" required name="father_name_hindi">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Father's Occupation</label>
+            <input type="text" class="form-control char-only" placeholder="Occupation" name="father_occupation">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label required-field">Mother's Name</label>
+            <input type="text" class="form-control char-only" placeholder="Mother's Name" required name="mother_name_english">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label required-field">Mother's Name (in Hindi)</label>
+            <input type="text" class="form-control " placeholder="Mother's Name" required name="mother_name_hindi">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Mother's Occupation</label>
+            <input type="text" class="form-control char-only" placeholder="Occupation" name="mother_occupation">
+          </div>
+           <!-- Guardian Details -->
+        <div class="mt-4">
+          <h6 class="mb-3"><i class="fas fa-user-shield"></i> Guardian Details (if different from parents)</h6>
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label class="form-label">Guardian's Name</label>
+              <input type="text" class="form-control char-only" placeholder="Guardian's Name" name="guardian_name_english">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Guardian's Name (in Hindi)</label>
+              <input type="text" class="form-control" placeholder="Guardian's Name" name="guardian_name_hindi">
+            </div>
+            <div class="col-md-4">
+            <label class="form-label">Guardian's Occupation</label>
+            <input type="text" class="form-control char-only" placeholder="Occupation" name="guardian_occupation">
+          </div>
+        </div>
+      </div>
+        </div>
+      </div>
+      <!-- 3. Contact & Address Details -->
+      <div class="form-section">
+        <div class="section-title">
+          <i class="fas fa-address-book"></i> 4. Contact & Address Details
+        </div>
+        <div class="mb-3">
+          <label class="form-label required-field">Permanent Postal Address</label>
+          <textarea class="form-control" rows="2" placeholder="Full address" required id="perm" name="permanent_address"></textarea>
+        </div>
+        <div class="row g-3 mb-3">
+          
+          <div class="col-md-4">
+            <label class="form-label required-field">PIN Code</label>
+            <input type="text" class="form-control num-only" placeholder="PIN Code" required name="pincode" maxlength="6">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label required-field">Mobile Number</label>
+            <input type="tel" class="form-control num-only" placeholder="10-digit Mobile No." required name="mobile_number" maxlength="10">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">(Whatsapp No)</label>
+            <input type="tel" class="form-control num-only" placeholder="" name="whatsapp_number" maxlength="10">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Aadhar Number</label>
+            <input type="tel" class="form-control num-only" placeholder="" required name="aadhar_number" maxlength="12">
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Blood Group</label>
+            <input type="text" class="form-control " placeholder=""  name="blood_group" >
+          </div>
+          <div class="col-md-4">
+            <label class="form-label required-field">Email</label>
             <input type="email" class="form-control" placeholder="example@email.com" name="email" required>
           </div>
         </div>
-      </div>
-
-      <!-- 4. Optional Subjects -->
-      <div class="form-section">
-        <div class="section-title">
-          <i class="fas fa-list-alt"></i> 4. Subject Offered (Optional)
         </div>
-        <div class="row g-3">
-          <div class="col-md-4">
-            <label class="form-label">Subject 1</label>
-            <input type="text" class="form-control char-only" placeholder="Main subject" name="subject1">
-          </div>
-          <div class="col-md-4">
-            <label class="form-label">Subject 2</label>
-            <input type="text" class="form-control char-only" placeholder="Secondary subject" name="subject2">
-          </div>
-          <div class="col-md-4">
-            <label class="form-label">Subject 3</label>
-            <input type="text" class="form-control char-only" placeholder="Additional subject" name="subject3">
-          </div>
-        </div>
-      </div>
-
-      <!-- 5. Compulsory Subjects -->
-      <div class="form-section">
-        <div class="section-title">
-          <i class="fas fa-book"></i> 5. Compulsory Subjects (For First Year Only)
-        </div>
-        <div class="row">
-          <div class="col-md-6">
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="Elementary Computer" id="comp1" name="comp_computer">
-              <label class="form-check-label" for="comp1">Elementary Computer</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="Environmental Studies" id="comp2" name="comp_env">
-              <label class="form-check-label" for="comp2">Environmental Studies</label>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="General English" id="comp3" name="comp_english">
-              <label class="form-check-label" for="comp3">General English</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="General Hindi" id="comp4" name="comp_hindi">
-              <label class="form-check-label" for="comp4">General Hindi</label>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 6. Previous Exam Details -->
-      <div class="form-section">
-        <div class="section-title">
-          <i class="fas fa-history"></i> 6. Previous Examination Passed
-        </div>
-        
-        <div class="table-responsive" id="table">
-            <table class="table">
+      
+       <div class="form-section">
+        <div class="section-title"><i class="fas fa-book"></i> 5. Details of marks obtained in the qualifying examination  </div>
+        <div class="table-responsive">
+          <table class="table table-bordered">
             <thead class="table-light">
               <tr>
-                <th>Course Title</th>
+                <th>Examination</th>
+                <th>Roll No</th>
                 <th>Year</th>
-                <th>University/Board</th>
-                <th>Subjects</th>
+                <th>University</th>
+                <th>Max Marks</th>
+                <th>Marks Obtained</th>
                 <th>%</th>
-                <th class="division-col">Division</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td><input type="text" class="form-control" placeholder="e.g. 12th" name="prev_course_title" required></td>
-                <td><input type="text" class="form-control num-only" placeholder="year" name="prev_year" required></td>
-                <td><input type="text" class="form-control char-only" placeholder="Board" name="prev_board" required></td>
-                <td><input type="text" class="form-control char-only" placeholder="Main sub" name="prev_subjects" required></td>
-                <td><input type="text" class="form-control num-only" placeholder="Percentage" name="prev_percentage"required></td>
-                <td>
-                  <select class="form-select" name="prev_division" required>
-                    <option value="" disabled selected>Select</option>
-                    <option>1st</option>
-                    <option>2nd</option>
-                    <option>3rd</option>
-                  </select>
-                </td>
+                <td>Part I</td>
+                <td><input type="text" class="form-control" name="roll1"></td>
+                <td><input type="text" class="form-control" name="year1"></td>
+                <td><input type="text" class="form-control" name="univ1"></td>
+                <td><input type="text" class="form-control" name="max1"></td>
+                <td><input type="text" class="form-control" name="marks1"></td>
+                <td><input type="text" class="form-control" name="percent1"></td>
               </tr>
-           
+              <tr>
+                <td>Part II</td>
+                <td><input type="text" class="form-control" name="roll2"></td>
+                <td><input type="text" class="form-control" name="year2"></td>
+                <td><input type="text" class="form-control" name="univ2"></td>
+                <td><input type="text" class="form-control" name="max2"></td>
+                <td><input type="text" class="form-control" name="marks2"></td>
+                <td><input type="text" class="form-control" name="percent2"></td>
+              </tr>
+              <tr>
+                <td>Part III</td>
+                <td><input type="text" class="form-control" name="roll3"></td>
+                <td><input type="text" class="form-control" name="year3"></td>
+                <td><input type="text" class="form-control" name="univ3"></td>
+                <td><input type="text" class="form-control" name="max3"></td>
+                <td><input type="text" class="form-control" name="marks3"></td>
+                <td><input type="text" class="form-control" name="percent3"></td>
+              </tr>
             </tbody>
           </table>
+          <div class="col-12 mt-3">
+            <label class="form-label required-field">Name of Institution last attended</label>
+            <input type="text" class="form-control required-field" placeholder="" name="institude" required>
+          </div>
         </div>
       </div>
-
-      <!-- 7. Institution Last Attended -->
+      
+              <!-- 6. Service Info -->
       <div class="form-section">
-        <div class="section-title">
-          <i class="fas fa-school"></i> 7. Institution Last Attended
-        </div>
-        <div class="mb-3">
-          <label class="form-label required-field">School/College Name</label>
-          <input type="text" class="form-control char-only" placeholder="Full institution name" required name="institution_name" required>
-        </div>
-        <div class="row g-3">
-          <div class="col-md-6">
-            <label class="form-label">Address</label>
-            <input type="text" class="form-control" placeholder="Institution address" name="institution_address" required>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label">Contact Number</label>
-            <input type="tel" class="form-control num-only" placeholder="Phone number" name="institution_contact" required>
-          </div>
-        </div>
+        <div class="section-title"><i class="fas fa-briefcase"></i> 6. Are you in Service?</div>
+        <select class="form-select" name="in_service">
+          <option value="">Select</option>
+          <option>Yes</option>
+          <option>No</option>
+        </select>
+        <small>If Yes, submit employer’s No Objection Certificate</small>
       </div>
+          </div>
 
-      <!-- 8. University Enrolment -->
-      <div class="form-section">
-        <div class="section-title">
-          <i class="fas fa-id-card"></i> 8. University Enrollment No. (if available)
-        </div>
-        <input type="text" class="form-control" placeholder="Enrollment Number" name="university_enrollment">
-      </div>
-
-      <!-- 9. NSS -->
-      <div class="form-section">
-        <div class="section-title">
-          <i class="fas fa-hands-helping"></i> 9. Extra-Curricular Activities
-        </div>
-        <div class="row g-3">
-          <div class="col-md-6">
-            <label class="form-label">Is NSS Offered?</label>
-            <select class="form-select" name="nss_offered">
-              <option value="" selected disabled>Select</option>
-              <option>Yes</option>
-              <option>No</option>
-            </select>
-          </div>
-          <div class="col-md-6">
-            <label class="form-label">Other Activities</label>
-            <input type="text" class="form-control" placeholder="Sports, clubs, etc." name="other_activities">
-          </div>
-        </div>
-      </div>
-   <!-- Declaration -->
-<div class="form-section bg-light p-3 rounded">
-  <h5 class="mb-3"><i class="fas fa-pen-nib"></i> Declaration</h5>
-  <p>
-    I hereby declare that the information provided above is true to the best of my knowledge. I understand that any incorrect information may result in the cancellation of my admission.
-  </p>
-  <div class="form-check">
-    <input class="form-check-input" type="checkbox" id="declaration" required name="declaration">
-    <label class="form-check-label" for="declaration">
-      I agree to the above declaration
-    </label>
+          <div class="form-section">
+  <div class="section-title"><i class="fas fa-futbol"></i> 7. Hobbies</div>
+  <div class="row">
+    <div class="col-md-6">
+      <input type="text" class="form-control" placeholder="Games / NSS / Debate etc." name="hobbies_interests">
+    </div>
+    <div class="col-md-6">
+      <input type="text" class="form-control" placeholder="Details" name="hobbies_details">
+    </div>
   </div>
 </div>
+
+<div class="form-section">
+        <div class="section-title"><i class="fas fa-paperclip"></i> 8. Enclosures</div>
+        <input type="text" class="form-control mb-2" name="enclosure1" placeholder="Document 1 (Write the doc name and attach the copy with printed form)">
+        <input type="text" class="form-control mb-2" name="enclosure2" placeholder="Document 2">
+        <input type="text" class="form-control mb-2" name="enclosure3" placeholder="Document 3">
+        <input type="text" class="form-control mb-2" name="enclosure4" placeholder="Document 4">
+      </div>
+
+      <!-- Signature -->
+      <div class="mt-4 mb-5 p-2 d-flex justify-content-between">
+        <b>Date: .................</b>
+        <b>Signature of Applicant</b>
+      </div>
+
+        <!-- Declaration -->
+<div class="form-section bg-light p-3 rounded">
+  <h5 class="mb-3"><i class="fas fa-pen-nib"></i> Declaration</h5>
+  <ol>
+    <li>I .............................................................................. (name) S/o  ...................................................... …….. Hereby 
+    Declare on oath/solemnly affirm that the entries made in application form are correct. </li>
+    <li>I have completed each entry of the application form and have attached the attested true copies of marks sheet 
+    of Part-I, Part-ll & Part-Ill of degree/P.G.,LLB I,II,III ,Diploma & LLM PART-I examination.</li>
+    <li>I shall bring the original mark sheets at the time of interview (if called for). If there is any lapse on my part, I 
+    shall be personally responsible for rejection of the application form.</li>
+    <li>I hereby declare that neither any criminal case is pending against me in any court of law nor I am convicted by 
+    a court of law for any offence.</li>
+    <li>I hereby declare that I have gone through the 144,145 and 145A for compulsory attendance, given in the 
+prospectus. I hereby declare that I shall be personally responsible for maintaining requisite attendance to 
+enable myself to appear in University examination. </li>
+    <li>I promise not to take part in Political activity of any kind or in agitation whatsoever directly or indirectly and 
+undertake to abide by the rules, framed by the Principal from time to time and I also hold myself responsible 
+for prompt payment of college dues. </li>
+    <li>I will abide by the rights of the principal of detaining me in any class in case of negligence of studies or 
+    expulsion for gross misconduct </li>
+    <li>All disputes regarding admission, examination and other academic matters shall be subject to the jurisdiction 
+    of Sri Ganganagar court/District forum.</li>
+    <li>Admission is given subject to approval of <b> Dr. Bhimrao Ambedkar Law University, Jaipur</b> </li>
+  </ol>
+  <div class="p-3 d-flex justify-content-between">
+    <b>Date...............</b>
+    <b>Signature of Applicant</b>
+  </div>
+  <div class="container mt-4">
+  <h4 class="mb-4">FOR OFFICE USE</h4>
+
+  <div class="mb-3">
+    <label class="form-label fw-bold">Eligible for admission to</label>
+    <div class="office-line"></div>
+  </div>
+
+  <div class="mb-3 text-end">
+    <label class="form-label fw-bold">Scrutinizer</label>
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label fw-bold">Admitted to:</label>
+    <div class="office-line"></div>
+  </div>
+
+  <div class="mb-5 mt-4 d-flex justify-content-between">
+    <b class="">Date...............</b>
+    <b>Admission Incharge</b>
+  </div>
+</div>
+  
+</div>
+        </div>
+        
+      
+ 
 
 <!-- Submit Button -->
 <div class="text-center mt-4">

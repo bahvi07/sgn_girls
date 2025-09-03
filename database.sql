@@ -1,74 +1,141 @@
--- Create database if not exists
-CREATE DATABASE IF NOT EXISTS sgn_girl_admission;
+-- Database schema for SGN Law College Admission System
 
--- Use the database
-USE sgn_girl_admission;
+-- Create database
+CREATE DATABASE IF NOT EXISTS sgn_law_college;
+USE sgn_law_college;
 
--- Create admission table
-CREATE TABLE IF NOT EXISTS admissions (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    form_no VARCHAR(50) NOT NULL UNIQUE,
-    
-    -- Class Details
-    class VARCHAR(50) NOT NULL,
-    part VARCHAR(10) NOT NULL,
-    medium ENUM('English', 'Hindi') NOT NULL,
-    faculty ENUM('Arts', 'Science', 'Commerce', 'Computer') NOT NULL,
-    
-    -- Personal Details
-    applicant_name VARCHAR(100) NOT NULL,
-    hindi_name VARCHAR(100),
-    father_name VARCHAR(100) NOT NULL,
-    f_occupation VARCHAR(100),
-    mother_name VARCHAR(100) NOT NULL,
-    m_occupation VARCHAR(100),
-    dob DATE NOT NULL,
+-- Table for storing student personal information
+CREATE TABLE students (
+    student_id INT AUTO_INCREMENT PRIMARY KEY,
+    form_no VARCHAR(50) UNIQUE NOT NULL,
+    admission_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    class_sought VARCHAR(100),
+    class_roll_no VARCHAR(20) UNIQUE,
+    id_card_no VARCHAR(50),
+    medium_of_instruction ENUM('English', 'Hindi') NOT NULL,
+    applicant_name_english VARCHAR(100) NOT NULL,
+    applicant_name_hindi VARCHAR(100),
+    gender ENUM('Male', 'Female', 'Other') NOT NULL,
+    date_of_birth DATE NOT NULL,
     category ENUM('General', 'SC', 'ST', 'OBC', 'Other') NOT NULL,
-    aadhar VARCHAR(12) NOT NULL,
-    photo VARCHAR(255) NOT NULL,
-    
-    -- Contact Details
-    perm_address TEXT NOT NULL,
-    same_address BOOLEAN DEFAULT FALSE,
-    local_address TEXT,
-    phone VARCHAR(15) NOT NULL,
-    email VARCHAR(100) NOT NULL,
-    
-    -- Optional Subjects
-    subject1 VARCHAR(100),
-    subject2 VARCHAR(100),
-    subject3 VARCHAR(100),
-    
-    -- Compulsory Subjects
-    comp_computer BOOLEAN DEFAULT FALSE,
-    comp_env BOOLEAN DEFAULT FALSE,
-    comp_english BOOLEAN DEFAULT FALSE,
-    comp_hindi BOOLEAN DEFAULT FALSE,
-    
-    -- Previous Exam Details
-    prev_course_title VARCHAR(100) NOT NULL,
-    prev_year VARCHAR(4) NOT NULL,
-    prev_board VARCHAR(100) NOT NULL,
-    prev_subjects VARCHAR(255) NOT NULL,
-    prev_percentage DECIMAL(5,2) NOT NULL,
-    prev_division ENUM('1st', '2nd', '3rd') NOT NULL,
-    
-    -- Institution Last Attended
-    institution_name VARCHAR(255) NOT NULL,
-    institution_address TEXT NOT NULL,
-    institution_contact VARCHAR(15) NOT NULL,
-    
-    -- University Enrollment
-    university_enrollment VARCHAR(50),
-    
-    -- Extra-Curricular Activities
-    nss_offered ENUM('Yes', 'No'),
-    other_activities TEXT,
-    
-    -- Declaration
-    declaration BOOLEAN NOT NULL DEFAULT FALSE,
-    
-    -- Timestamps
+    applicant_photo_path VARCHAR(255),
+    blood_group VARCHAR(10),
+    hobbies_interests TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci; 
+);
+
+-- Table for family details
+CREATE TABLE family_details (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT NOT NULL,
+    father_name_english VARCHAR(100) NOT NULL,
+    father_name_hindi VARCHAR(100),
+    father_occupation VARCHAR(100),
+    mother_name_english VARCHAR(100) NOT NULL,
+    mother_name_hindi VARCHAR(100),
+    mother_occupation VARCHAR(100),
+    guardian_name_english VARCHAR(100),
+    guardian_name_hindi VARCHAR(100),
+    guardian_occupation VARCHAR(100),
+    guardian_relation VARCHAR(50),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE
+);
+
+-- Table for contact information
+CREATE TABLE contact_details (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT NOT NULL,
+    permanent_address TEXT NOT NULL,
+    local_address TEXT,
+    pincode VARCHAR(10) NOT NULL,
+    mobile_number VARCHAR(15) NOT NULL,
+    whatsapp_number VARCHAR(15),
+    email VARCHAR(100),
+    aadhar_number VARCHAR(20) UNIQUE,
+    is_same_address BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE
+);
+
+-- Table for educational qualifications
+CREATE TABLE educational_qualifications (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT NOT NULL,
+    qualification_type ENUM('10th', '12th', 'Graduation', 'Post Graduation', 'Other') NOT NULL,
+    board_university VARCHAR(255) NOT NULL,
+    institution_name VARCHAR(255) NOT NULL,
+    passing_year YEAR NOT NULL,
+    percentage DECIMAL(5,2),
+    division VARCHAR(20),
+    subject VARCHAR(100),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE
+);
+
+-- Table for documents
+CREATE TABLE documents (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT NOT NULL,
+    document_type VARCHAR(100) NOT NULL,
+    document_path VARCHAR(255) NOT NULL,
+    uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE
+);
+
+-- Table for office use
+CREATE TABLE office_use (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT NOT NULL,
+    eligible_for_admission TEXT,
+    scrutinizer_name VARCHAR(100),
+    admission_status ENUM('Pending', 'Approved', 'Rejected') DEFAULT 'Pending',
+    admission_date DATE,
+    admission_incharge VARCHAR(100),
+    remarks TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE
+);
+
+-- Table for tracking form status
+CREATE TABLE application_status (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT NOT NULL,
+    current_status ENUM('Draft', 'Submitted', 'Under Review', 'Approved', 'Rejected') DEFAULT 'Draft',
+    status_changed_by VARCHAR(100),
+    comments TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE
+);
+
+-- Create indexes for better performance
+CREATE INDEX idx_student_form_no ON students(form_no);
+CREATE INDEX idx_student_name ON students(applicant_name_english);
+CREATE INDEX idx_contact_mobile ON contact_details(mobile_number);
+CREATE INDEX idx_contact_aadhar ON contact_details(aadhar_number);
+CREATE INDEX idx_application_status ON application_status(current_status);
+
+-- Create a view for quick student overview
+CREATE VIEW student_overview AS
+SELECT 
+    s.student_id,
+    s.form_no,
+    s.applicant_name_english as student_name,
+    s.class_sought,
+    s.class_roll_no,
+    c.mobile_number,
+    c.email,
+    os.admission_status,
+    app.current_status as application_status
+FROM 
+    students s
+LEFT JOIN 
+    contact_details c ON s.student_id = c.student_id
+LEFT JOIN 
+    office_use os ON s.student_id = os.student_id
+LEFT JOIN 
+    application_status app ON s.student_id = app.student_id;

@@ -10,454 +10,281 @@ use PHPMailer\PHPMailer\Exception;
 
 header('Content-type:application/json');
 
-// Unicode helper functions
-function normalizeUnicodeText($text) {
-    if (class_exists('Normalizer')) {
-        return Normalizer::normalize(trim($text), Normalizer::FORM_C);
-    }
-    return trim($text);
-}
+// Start transaction
+$conn->begin_transaction();
 
-function validateUnicodeText($text) {
-    // Check if text contains valid Unicode characters
-    return mb_check_encoding($text, 'UTF-8');
-}
-
-function sanitizeUnicodeText($text) {
-    $text = normalizeUnicodeText($text);
-    // Remove any non-printable characters except spaces
-    $text = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', $text);
-    return $text;
-}
-
-// Helper function for safe file upload
-function uploadPhoto($file) {
-    $targetDir = "../uploads/photos/";
-    if (!is_dir($targetDir)) {
-        mkdir($targetDir, 0777, true);
-    }
-    $fileName = uniqid('photo_', true) . '.' . pathinfo($file['name'], PATHINFO_EXTENSION);
-    $targetFile = $targetDir . $fileName;
-    if (move_uploaded_file($file['tmp_name'], $targetFile)) {
-        return $fileName;
-    }
-    return '';
-}
-
-// Collect POST data (same as your working code)
-$form_no = $_POST['form_no'];
-$class = $_POST['class'];
-$part = $_POST['part'];
-$medium = $_POST['medium'];
-$faculty = $_POST['faculty'];
-$applicant_name = sanitizeUnicodeText($_POST['applicant_name'] ?? '');
-$hindi_name = sanitizeUnicodeText($_POST['hindi_name'] ?? '');
-$father_name = sanitizeUnicodeText($_POST['father_name'] ?? '');
-$f_occupation = sanitizeUnicodeText($_POST['f_occupation'] ?? '');
-$mother_name = sanitizeUnicodeText($_POST['mother_name'] ?? '');
-$m_occupation = sanitizeUnicodeText($_POST['m_occupation'] ?? '');
-$dob = $_POST['dob'] ?? '';
-$category = $_POST['category'] ?? '';
-$aadhar = $_POST['aadhar'] ?? '';
-$perm_address = $_POST['perm_address'] ?? '';
-$same_address = isset($_POST['same_address']) ? 1 : 0; // ADDED THIS
-$local_address = $_POST['local_address'] ?? '';
-$phone = $_POST['phone'] ?? '';
-$email = $_POST['email'] ?? '';
-$subject1 = $_POST['subject1'] ?? '';
-$subject2 = $_POST['subject2'] ?? '';
-$subject3 = $_POST['subject3'] ?? '';
-$compulsory_computer = isset($_POST['comp_computer']) ? 1 : 0;
-$compulsory_env_studies = isset($_POST['comp_env']) ? 1 : 0;
-$compulsory_english = isset($_POST['comp_english']) ? 1 : 0;
-$compulsory_hindi = isset($_POST['comp_hindi']) ? 1 : 0;
-$prev_course_title = $_POST['prev_course_title'] ?? '';
-$prev_year = $_POST['prev_year'] ?? '';
-$prev_board = $_POST['prev_board'] ?? '';
-$prev_subjects = $_POST['prev_subjects'] ?? '';
-$prev_percentage = $_POST['prev_percentage'] ?? '';
-$prev_division = $_POST['prev_division'] ?? '';
-$institution_name = $_POST['institution_name'] ?? '';
-$institution_address = $_POST['institution_address'] ?? '';
-$institution_contact = $_POST['institution_contact'] ?? '';
-$university_enrollment = $_POST['university_enrollment'] ?? '';
-$nss_offered = $_POST['nss_offered'] ?? '';
-$other_activities = $_POST['other_activities'] ?? '';
-$declaration = isset($_POST['declaration']) ? 1 : 0;
-
-// Handle file upload
-$photo = '';
-if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
-    $photo = uploadPhoto($_FILES['photo']);
-}
-
-// FIXED: Added same_address to your working INSERT
-$stmt = $conn->prepare("INSERT INTO admissions (
-    form_no, class, part, medium, faculty,
-    applicant_name, hindi_name, father_name, f_occupation,
-    mother_name, m_occupation, dob, category, aadhar, photo, perm_address,
-    same_address, local_address, phone, email, subject1, subject2, subject3,
-    comp_computer, comp_env, comp_english, comp_hindi,
-    prev_course_title, prev_year, prev_board, prev_subjects,
-    prev_percentage, prev_division, institution_name, institution_address,
-    institution_contact, university_enrollment, nss_offered, other_activities, declaration
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-
-// FIXED: Added 'i' for same_address to your working bind_param
-$stmt->bind_param(
-    "ssssssssssssssssissssssiiiissssssssssssi", 
-    $form_no, $class, $part, $medium, $faculty,
-    $applicant_name, $hindi_name, $father_name, $f_occupation,
-    $mother_name, $m_occupation, $dob, $category, $aadhar, $photo, $perm_address,
-    $same_address, $local_address, $phone, $email, $subject1, $subject2, $subject3,
-    $compulsory_computer, $compulsory_env_studies, $compulsory_english, $compulsory_hindi,
-    $prev_course_title, $prev_year, $prev_board, $prev_subjects,
-    $prev_percentage, $prev_division, $institution_name, $institution_address,
-    $institution_contact, $university_enrollment, $nss_offered,
-    $other_activities, $declaration
-);
-
-if ($stmt->execute()) {
-    // Fetch the inserted data for PDF generation
-    $stmt2 = $conn->prepare("SELECT * FROM admissions WHERE form_no = ?");
-    $stmt2->bind_param("s", $form_no);
-    $stmt2->execute();
-    $result = $stmt2->get_result();
-    $data = $result->fetch_assoc();
-    $stmt2->close();
-
-    // --- PDF GENERATION: Use the same format as user_pdf.php ---
-    $options = new Options();
-    $options->set('defaultFont', 'NotoSansDevanagari');
-    $options->set('isRemoteEnabled', true);
-    $dompdf = new Dompdf($options);
-
-    $logoPath = $_SERVER['DOCUMENT_ROOT'] . '/sgn-girl-admission/assets/images/logo.png';
-    $base64 = '';
-    if (file_exists($logoPath)) {
-        $type = pathinfo($logoPath, PATHINFO_EXTENSION);
-        $imageData = file_get_contents($logoPath);
-        $base64 = 'data:image/' . $type . ';base64,' . base64_encode($imageData);
-    }
-
+try {
+    // 1. Handle file uploads
     $photoPath = '';
-    if (!empty($data['photo'])) {
-        $photoFile = $_SERVER['DOCUMENT_ROOT'] . '/sgn-girl-admission/uploads/photos/' . $data['photo'];
-        if (file_exists($photoFile)) {
-            $type = pathinfo($photoFile, PATHINFO_EXTENSION);
-            $imageData = file_get_contents($photoFile);
-            $photoPath = 'data:image/' . $type . ';base64,' . base64_encode($imageData);
+    if (isset($_FILES['applicant_photo']) && $_FILES['applicant_photo']['error'] === UPLOAD_ERR_OK) {
+        $targetDir = "../uploads/photos/";
+        if (!is_dir($targetDir)) {
+            mkdir($targetDir, 0777, true);
+        }
+        $fileName = uniqid('photo_', true) . '.' . pathinfo($_FILES['applicant_photo']['name'], PATHINFO_EXTENSION);
+        $targetFile = $targetDir . $fileName;
+        if (move_uploaded_file($_FILES['applicant_photo']['tmp_name'], $targetFile)) {
+            $photoPath = $fileName;
         }
     }
 
-    $primary = '#1a237e';
-    $accent = '#fbc02d';
-
-    $html = '
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <style>
-        @font-face {
-            font-family: "NotoSansDevanagari";
-            src: url("data:font/truetype;base64,' . base64_encode(file_get_contents($_SERVER['DOCUMENT_ROOT'] . '/sgn-girl-admission/assets/fonts/static/NotoSansDevanagari-Regular.ttf')) . '") format("truetype");
+    // 2. Handle class_roll_no - check for duplicates and generate a new one if needed
+    $class_roll_no = $_POST['class_roll_no'] ?? null;
+    if (!empty($class_roll_no)) {
+        $checkStmt = $conn->prepare("SELECT student_id FROM students WHERE class_roll_no = ?");
+        $checkStmt->bind_param("s", $class_roll_no);
+        $checkStmt->execute();
+        $checkResult = $checkStmt->get_result();
+        $checkStmt->close();
+        
+        // If roll number exists, append a random 2-digit number to make it unique
+        if ($checkResult->num_rows > 0) {
+            $class_roll_no = $class_roll_no . rand(10, 99);
         }
-        * {
-            font-family: "NotoSansDevanagari", Arial, sans-serif !important;
-        }
-        .header-table { width: 100%; border-collapse: collapse; background: ' . $primary . '; color: #fff; border-bottom: 4px solid ' . $accent . '; }
-        .header-table td { vertical-align: top; padding: 18px 20px; }
-        .logo { height: 60px; margin-right: 18px; }
-        .college-info { }
-        .college-name { font-size: 20px; font-weight: bold; margin-bottom: 2px; letter-spacing: 1px; }
-        .form-title { font-size: 16px; font-weight: bold; margin-top: 8px; color: ' . $accent . '; }
-        .photo-box { width: 90px; height: 110px; border: 2px solid ' . $accent . '; border-radius: 8px; overflow: hidden; background: #fff; display: flex; align-items: center; justify-content: center; }
-        .photo-box img { width: 100%; height: 100%; object-fit: cover; }
-        .section-header { background: ' . $accent . '; color: #222; padding: 8px 12px; font-weight: bold; font-size: 14px; margin: 20px 0 10px 0; border-radius: 4px; }
-        .info-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; background: #fff; }
-        .info-table td { padding: 7px 8px; border: 1px solid #e0e0e0; vertical-align: top; }
-        .info-table .label { font-weight: bold; background: #f5f5f5; width: 30%; }
-        .exam-table { width: 100%; border-collapse: collapse; margin: 10px 0; background: #fff; }
-        .exam-table th, .exam-table td { border: 1px solid #bdbdbd; padding: 6px; text-align: center; }
-        .exam-table th { background: #e3e3e3; font-weight: bold; }
-    </style>
-
-    <table class="header-table">
-        <tr>
-            <td style="width:70%;">
-                ' . ($base64 ? '<img src="' . $base64 . '" alt="College Logo" class="logo">' : '') . '
-                <div class="college-info">
-                    <div class="college-name">SRI GURU NANAK GIRLS P.G. COLLEGE</div>
-                    <div>Affiliated to Maharaja Ganga Singh University, Bikaner (Raj.)</div>
-                    <div class="form-title">ADMISSION FORM</div>
-                </div>
-            </td>
-            <td style="width:30%; text-align:right;">
-                <div class="photo-box" style="margin-left:auto;">
-                    ' . ($photoPath ? '<img src="' . $photoPath . '" alt="Applicant Photo">' : '<span style="color:#888;font-size:11px;">No Photo</span>') . '
-                </div>
-            </td>
-        </tr>
-    </table>
-    ';
-
-    // Admission/Class Details
-    $html .= '<table class="info-table" style="margin-bottom:10px;">';
-    if (!empty($data['form_no']) || !empty($data['class'])) {
-        $html .= '<tr>';
-        if (!empty($data['form_no'])) {
-            $html .= '<td class="label">Form No</td><td>' . htmlspecialchars($data['form_no']) . '</td>';
-        }
-        if (!empty($data['class'])) {
-            $html .= '<td class="label">Class</td><td>' . htmlspecialchars($data['class']) . '</td>';
-        }
-        $html .= '</tr>';
     }
-    if (!empty($data['part']) || !empty($data['medium'])) {
-        $html .= '<tr>';
-        if (!empty($data['part'])) {
-            $html .= '<td class="label">Part</td><td>' . htmlspecialchars($data['part']) . '</td>';
-        }
-        if (!empty($data['medium'])) {
-            $html .= '<td class="label">Medium</td><td>' . htmlspecialchars($data['medium']) . '</td>';
-        }
-        $html .= '</tr>';
+    
+    // 3. Insert into students table
+    $stmt = $conn->prepare("
+        INSERT INTO students (
+            form_no, class_sought, class_roll_no, id_card_no, medium_of_instruction,
+            applicant_name_english, applicant_name_hindi, gender, date_of_birth, 
+            category, applicant_photo_path, blood_group, hobbies_interests
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ");
+    
+    // Create variables for binding
+    $form_no = $_POST['form_no'];
+    $class_sought = $_POST['class_sought'] ?? null;
+    $id_card_no = $_POST['id_card_no'] ?? null;
+    $medium_of_instruction = $_POST['medium_of_instruction'] ?? 'English';
+    $applicant_name_english = $_POST['applicant_name_english'] ?? '';
+    $applicant_name_hindi = $_POST['applicant_name_hindi'] ?? null;
+    $gender = $_POST['gender'] ?? '';
+    $date_of_birth = $_POST['date_of_birth'] ?? null;
+    $category = $_POST['category'] ?? 'General';
+    $blood_group = $_POST['blood_group'] ?? null;
+    $hobbies_interests = $_POST['hobbies_interests'] ?? null;
+    
+    $stmt->bind_param(
+        "sssssssssssss",
+        $form_no,
+        $class_sought,
+        $class_roll_no,
+        $id_card_no,
+        $medium_of_instruction,
+        $applicant_name_english,
+        $applicant_name_hindi,
+        $gender,
+        $date_of_birth,
+        $category,
+        $photoPath,
+        $blood_group,
+        $hobbies_interests
+    );
+    
+    if (!$stmt->execute()) {
+        throw new Exception("Failed to save student data: " . $stmt->error);
     }
-    $html .= '</table>';
+    
+    $studentId = $conn->insert_id;
+    $stmt->close();
 
-    // Admission Details
-    if (!empty($data['faculty']) || !empty($data['category'])) {
-        $html .= '<div class="section-header">ADMISSION DETAILS</div>
-        <table class="info-table"><tr>';
-        if (!empty($data['faculty'])) {
-            $html .= '<td class="label">Faculty</td><td>' . htmlspecialchars($data['faculty']) . '</td>';
-        }
-        if (!empty($data['category'])) {
-            $html .= '<td class="label">Category</td><td>' . htmlspecialchars($data['category']) . '</td>';
-        }
-        $html .= '</tr></table>';
+    // 3. Insert into family_details
+    $stmt = $conn->prepare("
+        INSERT INTO family_details (
+            student_id, father_name_english, father_name_hindi, father_occupation,
+            mother_name_english, mother_name_hindi, mother_occupation,
+            guardian_name_english, guardian_name_hindi, guardian_occupation, guardian_relation
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ");
+    
+    // Create variables for family details binding
+    $father_name_english = $_POST['father_name_english'] ?? '';
+    $father_name_hindi = $_POST['father_name_hindi'] ?? null;
+    $father_occupation = $_POST['father_occupation'] ?? null;
+    $mother_name_english = $_POST['mother_name_english'] ?? '';
+    $mother_name_hindi = $_POST['mother_name_hindi'] ?? null;
+    $mother_occupation = $_POST['mother_occupation'] ?? null;
+    $guardian_name_english = $_POST['guardian_name_english'] ?? null;
+    $guardian_name_hindi = $_POST['guardian_name_hindi'] ?? null;
+    $guardian_occupation = $_POST['guardian_occupation'] ?? null;
+    $guardian_relation = $_POST['guardian_relation'] ?? null;
+    
+    $stmt->bind_param(
+        "issssssssss",
+        $studentId,
+        $father_name_english,
+        $father_name_hindi,
+        $father_occupation,
+        $mother_name_english,
+        $mother_name_hindi,
+        $mother_occupation,
+        $guardian_name_english,
+        $guardian_name_hindi,
+        $guardian_occupation,
+        $guardian_relation
+    );
+    
+    if (!$stmt->execute()) {
+        throw new Exception("Failed to save family details: " . $stmt->error);
     }
+    $stmt->close();
 
-    // Personal Details
-    if (!empty($data['applicant_name']) || !empty($data['hindi_name']) || !empty($data['dob']) ||
-        !empty($data['father_name']) || !empty($data['f_occupation']) ||
-        !empty($data['mother_name']) || !empty($data['m_occupation']) ||
-        !empty($data['aadhar']) || !empty($data['phone']) || !empty($data['email'])) {
+    // 4. Insert into contact_details
+    $stmt = $conn->prepare("
+        INSERT INTO contact_details (
+            student_id, permanent_address, local_address, pincode,
+            mobile_number, whatsapp_number, email, aadhar_number, is_same_address
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ");
+    
+    // Create variables for contact details binding
+    $isSameAddress = isset($_POST['is_same_address']) ? 1 : 0;
+    $permanent_address = $_POST['permanent_address'] ?? '';
+    $localAddress = $isSameAddress ? $permanent_address : ($_POST['local_address'] ?? '');
+    $pincode = $_POST['pincode'] ?? '';
+    $mobile_number = $_POST['mobile_number'] ?? '';
+    $whatsapp_number = $_POST['whatsapp_number'] ?? null;
+    $email = $_POST['email'] ?? null;
+    $aadhar_number = $_POST['aadhar_number'] ?? null;
+    
+    $stmt->bind_param(
+        "isssssssi",
+        $studentId,
+        $permanent_address,
+        $localAddress,
+        $pincode,
+        $mobile_number,
+        $whatsapp_number,
+        $email,
+        $aadhar_number,
+        $isSameAddress
+    );
+    
+    if (!$stmt->execute()) {
+        throw new Exception("Failed to save contact details: " . $stmt->error);
+    }
+    $stmt->close();
 
-        $html .= '<div class="section-header">PERSONAL DETAILS</div><table class="info-table">';
-
-        if (!empty($data['applicant_name'])) {
-            $html .= '<tr><td class="label">Name (English)</td><td colspan="3">' . htmlspecialchars($data['applicant_name']) . '</td></tr>';
-        }
-        if (!empty($data['hindi_name']) || !empty($data['dob'])) {
-            $html .= '<tr>';
-            if (!empty($data['hindi_name'])) {
-                $html .= '<td class="label">Name (Hindi)</td><td>' . htmlspecialchars($data['hindi_name']) . '</td>';
+    // 5. Insert educational qualifications if provided
+    if (!empty($_POST['qualifications'])) {
+        $stmt = $conn->prepare("
+            INSERT INTO educational_qualifications (
+                student_id, qualification_type, board_university, institution_name,
+                passing_year, percentage, division, subject
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ");
+        
+        foreach ($_POST['qualifications'] as $qual) {
+            $stmt->bind_param(
+                "issssdss",
+                $studentId,
+                $qual['type'],
+                $qual['board'],
+                $qual['institution'],
+                $qual['year'],
+                $qual['percentage'] ?? null,
+                $qual['division'] ?? null,
+                $qual['subject'] ?? null
+            );
+            
+            if (!$stmt->execute()) {
+                throw new Exception("Failed to save educational qualification: " . $stmt->error);
             }
-            if (!empty($data['dob'])) {
-                $html .= '<td class="label">Date of Birth</td><td>' . htmlspecialchars($data['dob']) . '</td>';
-            }
-            $html .= '</tr>';
         }
-        if (!empty($data['father_name']) || !empty($data['f_occupation'])) {
-            $html .= '<tr>';
-            if (!empty($data['father_name'])) {
-                $html .= '<td class="label">Father\'s Name</td><td>' . htmlspecialchars($data['father_name']) . '</td>';
-            }
-            if (!empty($data['f_occupation'])) {
-                $html .= '<td class="label">Occupation</td><td>' . htmlspecialchars($data['f_occupation']) . '</td>';
-            }
-            $html .= '</tr>';
-        }
-        if (!empty($data['mother_name']) || !empty($data['m_occupation'])) {
-            $html .= '<tr>';
-            if (!empty($data['mother_name'])) {
-                $html .= '<td class="label">Mother\'s Name</td><td>' . htmlspecialchars($data['mother_name']) . '</td>';
-            }
-            if (!empty($data['m_occupation'])) {
-                $html .= '<td class="label">Occupation</td><td>' . htmlspecialchars($data['m_occupation']) . '</td>';
-            }
-            $html .= '</tr>';
-        }
-        if (!empty($data['aadhar']) || !empty($data['phone'])) {
-            $html .= '<tr>';
-            if (!empty($data['aadhar'])) {
-                $html .= '<td class="label">Aadhar Number</td><td>' . htmlspecialchars($data['aadhar']) . '</td>';
-            }
-            if (!empty($data['phone'])) {
-                $html .= '<td class="label">Phone</td><td>' . htmlspecialchars($data['phone']) . '</td>';
-            }
-            $html .= '</tr>';
-        }
-        if (!empty($data['email'])) {
-            $html .= '<tr><td class="label">Email</td><td colspan="3">' . htmlspecialchars($data['email']) . '</td></tr>';
-        }
-        $html .= '</table>';
+        $stmt->close();
     }
 
-    // Address Details
-    if (!empty($data['perm_address']) || !empty($data['local_address'])) {
-        $html .= '<div class="section-header">ADDRESS DETAILS</div><table class="info-table"><tr>';
-        if (!empty($data['perm_address'])) {
-            $html .= '<td class="label">Permanent Address</td><td>' . nl2br(htmlspecialchars($data['perm_address'])) . '</td>';
-        }
-        if (!empty($data['local_address'])) {
-            $html .= '<td class="label">Local Address</td><td>' . nl2br(htmlspecialchars($data['local_address'])) . '</td>';
-        }
-        $html .= '</tr></table>';
+    // 6. Insert into office_use with default values
+    $stmt = $conn->prepare("
+        INSERT INTO office_use (student_id, admission_status)
+        VALUES (?, 'Pending')
+    ");
+    $stmt->bind_param("i", $studentId);
+    if (!$stmt->execute()) {
+        throw new Exception("Failed to initialize office use record: " . $stmt->error);
     }
+    $stmt->close();
 
-    // Subjects Offered
-    if (!empty($data['subject1']) || !empty($data['subject2']) || !empty($data['subject3'])) {
-        $html .= '<div class="section-header">SUBJECTS OFFERED</div>
-        <table class="info-table">';
-        if (!empty($data['subject1']) || !empty($data['subject2'])) {
-            $html .= '<tr>';
-            if (!empty($data['subject1'])) {
-                $html .= '<td class="label">Subject 1</td><td>' . htmlspecialchars($data['subject1']) . '</td>';
+    // 7. Insert into application_status
+    $stmt = $conn->prepare("
+        INSERT INTO application_status (student_id, current_status)
+        VALUES (?, 'Submitted')
+    ");
+    $stmt->bind_param("i", $studentId);
+    if (!$stmt->execute()) {
+        throw new Exception("Failed to update application status: " . $stmt->error);
+    }
+    $stmt->close();
+
+    // 8. Handle document uploads if any
+    if (!empty($_FILES['documents'])) {
+        $stmt = $conn->prepare("
+            INSERT INTO documents (student_id, document_type, document_path)
+            VALUES (?, ?, ?)
+        ");
+        
+        foreach ($_FILES['documents']['tmp_name'] as $key => $tmpName) {
+            if ($_FILES['documents']['error'][$key] === UPLOAD_ERR_OK) {
+                $targetDir = "../uploads/documents/";
+                if (!is_dir($targetDir)) {
+                    mkdir($targetDir, 0777, true);
+                }
+                
+                $fileName = uniqid('doc_', true) . '_' . basename($_FILES['documents']['name'][$key]);
+                $targetFile = $targetDir . $fileName;
+                
+                if (move_uploaded_file($tmpName, $targetFile)) {
+                    $docType = $_FILES['documents']['type'][$key];
+                    $stmt->bind_param("iss", $studentId, $docType, $fileName);
+                    
+                    if (!$stmt->execute()) {
+                        throw new Exception("Failed to save document record: " . $stmt->error);
+                    }
+                }
             }
-            if (!empty($data['subject2'])) {
-                $html .= '<td class="label">Subject 2</td><td>' . htmlspecialchars($data['subject2']) . '</td>';
-            }
-            $html .= '</tr>';
         }
-        if (!empty($data['subject3'])) {
-            $html .= '<tr><td class="label">Subject 3</td><td colspan="3">' . htmlspecialchars($data['subject3']) . '</td></tr>';
-        }
-        $html .= '</table>';
+        $stmt->close();
     }
 
-    // Compulsory Subjects
-    $compulsory = [];
-    if (!empty($data['comp_computer'])) $compulsory[] = 'Elementary Computer';
-    if (!empty($data['comp_env'])) $compulsory[] = 'Environmental Studies';
-    if (!empty($data['comp_english'])) $compulsory[] = 'General English';
-    if (!empty($data['comp_hindi'])) $compulsory[] = 'General Hindi';
-    if (count($compulsory) > 0) {
-        $html .= '<div class="section-header">COMPULSORY SUBJECTS</div>
-        <table class="info-table">
-            <tr>
-                <td class="label">Selected Subjects</td>
-                <td colspan="3">' . implode(', ', $compulsory) . '</td>
-            </tr>
-        </table>';
-    }
-
-    // Previous Examination
-    if (!empty($data['prev_course_title']) || !empty($data['prev_year']) || !empty($data['prev_board']) ||
-        !empty($data['prev_subjects']) || !empty($data['prev_percentage']) || !empty($data['prev_division'])) {
-        $html .= '<div class="section-header">PREVIOUS EXAMINATION</div>
-        <table class="exam-table">
-            <thead>
-                <tr>
-                    ' . (!empty($data['prev_course_title']) ? '<th>Course</th>' : '') . '
-                    ' . (!empty($data['prev_year']) ? '<th>Year</th>' : '') . '
-                    ' . (!empty($data['prev_board']) ? '<th>Board</th>' : '') . '
-                    ' . (!empty($data['prev_subjects']) ? '<th>Subjects</th>' : '') . '
-                    ' . (!empty($data['prev_percentage']) ? '<th>Percentage</th>' : '') . '
-                    ' . (!empty($data['prev_division']) ? '<th>Division</th>' : '') . '
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    ' . (!empty($data['prev_course_title']) ? '<td>' . htmlspecialchars($data['prev_course_title']) . '</td>' : '') . '
-                    ' . (!empty($data['prev_year']) ? '<td>' . htmlspecialchars($data['prev_year']) . '</td>' : '') . '
-                    ' . (!empty($data['prev_board']) ? '<td>' . htmlspecialchars($data['prev_board']) . '</td>' : '') . '
-                    ' . (!empty($data['prev_subjects']) ? '<td>' . htmlspecialchars($data['prev_subjects']) . '</td>' : '') . '
-                    ' . (!empty($data['prev_percentage']) ? '<td>' . htmlspecialchars($data['prev_percentage']) . '</td>' : '') . '
-                    ' . (!empty($data['prev_division']) ? '<td>' . htmlspecialchars($data['prev_division']) . '</td>' : '') . '
-                </tr>
-            </tbody>
-        </table>';
-    }
-
-    // Institution Last Attended
-    if (!empty($data['institution_name']) || !empty($data['institution_address']) || !empty($data['institution_contact']) || !empty($data['university_enrollment'])) {
-        $html .= '<div class="section-header">INSTITUTION LAST ATTENDED</div>
-        <table class="info-table"><tr>';
-        if (!empty($data['institution_name'])) {
-            $html .= '<td class="label">Institution Name</td><td>' . htmlspecialchars($data['institution_name']) . '</td>';
-        }
-        if (!empty($data['institution_address'])) {
-            $html .= '<td class="label">Address</td><td>' . htmlspecialchars($data['institution_address']) . '</td>';
-        }
-        $html .= '</tr><tr>';
-        if (!empty($data['institution_contact'])) {
-            $html .= '<td class="label">Contact</td><td>' . htmlspecialchars($data['institution_contact']) . '</td>';
-        }
-        if (!empty($data['university_enrollment'])) {
-            $html .= '<td class="label">University Enrollment</td><td>' . htmlspecialchars($data['university_enrollment']) . '</td>';
-        }
-        $html .= '</tr></table>';
-    }
-
-    // Extra-Curricular Activities
-    if (!empty($data['nss_offered']) || !empty($data['other_activities'])) {
-        $html .= '<div class="section-header">EXTRA-CURRICULAR ACTIVITIES</div>
-        <table class="info-table"><tr>';
-        if (!empty($data['nss_offered'])) {
-            $html .= '<td class="label">NSS Offered</td><td>' . htmlspecialchars($data['nss_offered']) . '</td>';
-        }
-        if (!empty($data['other_activities'])) {
-            $html .= '<td class="label">Other Activities</td><td>' . htmlspecialchars($data['other_activities']) . '</td>';
-        }
-        $html .= '</tr></table>';
-    }
-
-    $html .= '<div style="margin-top: 30px; text-align: center; font-size: 10px; color: #666;">
-        Form submitted on: ' . htmlspecialchars($data['created_at'] ?? date('Y-m-d H:i:s')) . '
-        <br>Downloaded on: ' . date('Y-m-d H:i:s') . '
-    </div>';
-
+    // 9. Generate PDF (simplified example)
+    $options = new Options();
+    $options->set('defaultFont', 'Arial');
+    $dompdf = new Dompdf($options);
+    
+    $html = "
+        <h1>Application Form</h1>
+        <p>Form No: {$_POST['form_no']}</p>
+        <p>Name: {$_POST['applicant_name_english']}</p>
+        <!-- Add more fields as needed -->
+    ";
+    
     $dompdf->loadHtml($html);
     $dompdf->setPaper('A4', 'portrait');
     $dompdf->render();
-    $pdfOutput = $dompdf->output();
-
+    
     // Save PDF to server
-    $uploadsDir = __DIR__ . "/../uploads/";
-    if (!is_dir($uploadsDir)) {
-        mkdir($uploadsDir, 0777, true);
-    }
-    $pdfFile = $uploadsDir . "admission_{$form_no}.pdf";
-    file_put_contents($pdfFile, $pdfOutput);
+    $pdfPath = "../uploads/forms/{$studentId}_application.pdf";
+    file_put_contents($pdfPath, $dompdf->output());
 
-    // Send Email (same PDF format as download)
-    $mail = new PHPMailer(true);
-    try {
-        $mail->isSMTP();
-        $mail->Host = 'smtp.gmail.com';
-        $mail->SMTPAuth = true;
-        $mail->Username = 'sgngirlpgcollege@gmail.com';
-        $mail->Password = 'swxjunjmumglrpws';
-        $mail->SMTPSecure = 'tls';
-        $mail->Port = 587;
-
-        $mail->setFrom('sgngirlpgcollege@gmail.com', 'SGN Girls College');
-        $mail->addAddress('sgngirlpgcollege@gmail.com');
-        
-        if (!empty($data['email'])) {
-            $mail->addAddress($data['email']);
-        }
-
-        $mail->isHTML(true);
-        $mail->Subject = "Admission Form - {$form_no}";
-        $mail->Body = "Admission form submitted for " . htmlspecialchars($data['applicant_name']);
-        $mail->addStringAttachment($pdfOutput, "Admission_Form_{$form_no}.pdf");
-
-        $mail->send();
-        $emailMsg = "Email sent successfully!";
-    } catch (Exception $e) {
-        $emailMsg = "Email failed: " . $mail->ErrorInfo;
-    }
-
+    // 10. Commit transaction
+    $conn->commit();
+    
     echo json_encode([
         'success' => true,
-        'pdf_url' => "uploads/admission_{$form_no}.pdf",
-        'message' => "Form submitted successfully! {$emailMsg}"
+        'message' => 'Application submitted successfully!',
+        'form_no' => $_POST['form_no'],
+        'student_id' => $studentId
     ]);
 
-} else {
-    echo json_encode(['success' => false, 'message' => 'Insert failed: ' . $stmt->error]);
+} catch (Exception $e) {
+    // Rollback transaction on error
+    $conn->rollback();
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Error: ' . $e->getMessage()
+    ]);
 }
-$stmt->close();
+
 $conn->close();
-?>
