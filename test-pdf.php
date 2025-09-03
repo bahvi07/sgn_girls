@@ -1,7 +1,7 @@
 <?php
 require './includes/config.php';
 require './admission/vendor/autoload.php';
-
+header('Content-Type: text/html; charset=utf-8');
 use Dompdf\Dompdf;
 use Dompdf\Options;
 
@@ -83,10 +83,10 @@ function generatePdf($formNo, $download = false) {
     
     // Generate PDF with UTF-8 and Hindi support
     $options = new Options();
-    $options->set('isHtml5ParserEnabled', true);
+    $options->set('defaultFont', 'NotoSansDevanagari');
     $options->set('isRemoteEnabled', true);
-    $options->set('defaultFont', 'DejaVu Sans');
     $dompdf = new Dompdf($options);
+    
     
     // Start output buffering
     ob_start();

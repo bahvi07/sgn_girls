@@ -12,12 +12,13 @@
             size: A4;
         }
         @font-face {
-            font-family: 'Noto Sans Devanagari';
-            font-style: normal;
-            font-weight: normal;
-            src: url('file://<?php echo str_replace('\\', '/', __DIR__) ?>/assets/fonts/NotoSansDevanagari-Regular.ttf') format('truetype');
-            -fs-pdf-font-embed: embed;
-            -fs-pdf-font-encoding: Identity-H;
+    font-family: "NotoSansDevanagari";
+    src: url("<?php echo __DIR__ . '/../assets/fonts/NotoSansDevanagari-Regular.ttf'; ?>") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+}
+        * {
+            font-family: "NotoSansDevanagari", Arial, sans-serif !important;
         }
         body { 
             font-family: 'Noto Sans Devanagari', Arial, sans-serif; 
