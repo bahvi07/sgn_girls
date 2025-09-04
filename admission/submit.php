@@ -1,5 +1,11 @@
 <?php
 date_default_timezone_set('Asia/Kolkata');
+
+// Start output buffering to prevent 'headers already sent' errors
+if (ob_get_level() == 0) {
+    ob_start();
+}
+
 require(__DIR__ . '/../includes/config.php');
 require './vendor/autoload.php';
 
@@ -8,31 +14,13 @@ use Dompdf\Options;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-header('Content-type:application/json');
-header('Content-Type: text/html; charset=utf-8');
+// Set JSON header only if not already set
+if (!headers_sent()) {
+    header('Content-Type: application/json; charset=utf-8');
+}
 // Start transaction
 $conn->begin_transaction();
 
-// unicode helper function
-function normalizeUnicodeText($text) {
-    if(class_exists('Normalizer')) {
-        return Normalizer::normalize(trim($text),Normalizer::FORM_C);
-    }
-    return trim($text); // Fallback if intl extension is not available
-}
-
-
-function validateUnicodeText($text) {
-    // Check if text contains valid Unicode characters
-    return mb_check_encoding($text, 'UTF-8');
-}
-
-function sanitizeUnicodeText($text) {
-    $text = normalizeUnicodeText($text);
-    // Remove any non-printable characters except spaces
-    $text = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', $text);
-    return $text;
-}
 
 try {
     // 1. Handle file uploads
@@ -80,7 +68,7 @@ try {
     $id_card_no = $_POST['id_card_no'] ?? null;
     $medium_of_instruction = $_POST['medium_of_instruction'] ?? 'English';
     $applicant_name_english = $_POST['applicant_name_english'] ?? '';
-    $applicant_name_hindi =sanitizeUnicodeText($_POST['applicant_name_hindi']) ?? null;
+    $applicant_name_hindi =$_POST['applicant_name_hindi'] ?? null;
     $gender = $_POST['gender'] ?? '';
     $date_of_birth = $_POST['date_of_birth'] ?? null;
     $category = $_POST['category'] ?? 'General';
@@ -128,13 +116,13 @@ try {
     
     // Create variables for family details binding
     $father_name_english = $_POST['father_name_english'] ?? '';
-    $father_name_hindi =sanitizeUnicodeText($_POST['father_name_hindi']) ?? null;
+    $father_name_hindi =$_POST['father_name_hindi']?? null;
     $father_occupation = $_POST['father_occupation'] ?? null;
     $mother_name_english = $_POST['mother_name_english'] ?? '';
-    $mother_name_hindi = sanitizeUnicodeText( $_POST['mother_name_hindi'] )?? null;
+    $mother_name_hindi = $_POST['mother_name_hindi'] ?? null;
     $mother_occupation = $_POST['mother_occupation'] ?? null;
     $guardian_name_english = $_POST['guardian_name_english'] ?? null;
-    $guardian_name_hindi = sanitizeUnicodeText($_POST['guardian_name_hindi']) ?? null;
+    $guardian_name_hindi = $_POST['guardian_name_hindi'] ?? null;
     $guardian_occupation = $_POST['guardian_occupation'] ?? null;
     $guardian_relation = $_POST['guardian_relation'] ?? null;
     
@@ -266,133 +254,32 @@ try {
         VALUES (?, 'Submitted')
     ");
     $stmt->bind_param("i", $studentId);
-    $options = new Options();
-    $options->set('defaultFont', 'NotoSansDevanagari');
-    $options->set('isRemoteEnabled', true);
-    $options->set('isHtml5ParserEnabled', true);
-    $options->set('isPhpEnabled', true);
+   
     
-    // Set font directory
-    $fontDir = $_SERVER['DOCUMENT_ROOT'] . '/sgn_law_clg/assets/fonts/static/';
-    $options->set('fontDir', $fontDir);
-    $options->set('fontCache', $fontDir . 'cache/');
-    
-    $dompdf = new Dompdf($options);
-    
-    // Prepare the HTML with proper font configuration
-    $html = '
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-        <style>
-           @font-face {
-    font-family: "NotoSansDevanagari";
-    src: url("file://" . __DIR__ . "/../assets/fonts/NotoSansDevanagari-Regular.ttf") format("truetype");
-    font-weight: normal;
-    font-style: normal;
-}
-            body {
-                font-family: "NotoSansDevanagari", Arial, sans-serif;
-                line-height: 1.6;
-                padding: 20px;
-            }
-            .hindi {
-                font-family: "NotoSansDevanagari", Arial, sans-serif;
-                direction: ltr;
-                unicode-bidi: bidi-override;
-            }
-            .header {
-                text-align: center;
-                margin-bottom: 20px;
-            }
-            .section {
-                margin-bottom: 25px;
-            }
-            .field-row {
-                margin-bottom: 10px;
-                display: flex;
-            }
-            .field-label {
-                font-weight: bold;
-                width: 200px;
-            }
-            .field-value {
-                flex: 1;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="header">
-            <h1>Application Form</h1>
-            <p>Form No: ' . htmlspecialchars($form_no) . '</p>
-        </div>
-        
-        <div class="section">
-            <h2>Personal Information</h2>
-            <div class="field-row">
-                <div class="field-label">Name (English):</div>
-                <div class="field-value">' . htmlspecialchars($applicant_name_english) . '</div>
-            </div>
-            <div class="field-row">
-                <div class="field-label">Name (Hindi):</div>
-                <div class="field-value hindi">' . htmlspecialchars($applicant_name_hindi) . '</div>
-            </div>
-            <div class="field-row">
-                <div class="field-label">Date of Birth:</div>
-                <div class="field-value">' . htmlspecialchars($date_of_birth) . '</div>
-            </div>
-            <div class="field-row">
-                <div class="field-label">Gender:</div>
-                <div class="field-value">' . htmlspecialchars($gender) . '</div>
-            </div>
-        </div>
-        
-        <div class="section">
-            <h2>Contact Information</h2>
-            <div class="field-row">
-                <div class="field-label">Mobile Number:</div>
-                <div class="field-value">' . htmlspecialchars($mobile_number) . '</div>
-            </div>
-            <div class="field-row">
-                <div class="field-label">Email:</div>
-                <div class="field-value">' . htmlspecialchars($email) . '</div>
-            </div>
-            <div class="field-row">
-                <div class="field-label">Address:</div>
-                <div class="field-value">' . nl2br(htmlspecialchars($permanent_address)) . '</div>
-            </div>
-        </div>
-    </body>
-    </html>';
-    
-    // Set encoding and load HTML
-    $dompdf->loadHtml($html, 'UTF-8');
-    $dompdf->setPaper('A4', 'portrait');
-    
-    // Render the PDF
-    $dompdf->render();
-    
-    // Create directory if it doesn't exist
-    $pdfDir = "../uploads/forms/";
-    if (!file_exists($pdfDir)) {
-        mkdir($pdfDir, 0777, true);
+    // Clear any previous output
+    if (ob_get_level() > 0) {
+        ob_clean();
     }
     
-    // Save PDF to server
-    $pdfPath = $pdfDir . $studentId . '_application.pdf';
-    file_put_contents($pdfPath, $dompdf->output());
+    // Output the PDF
+
+    // Clear output buffer and end buffering
+    if (ob_get_level() > 0) {
+        ob_end_clean();
+    }
 
     // 10. Commit transaction
     $conn->commit();
     
-    echo json_encode([
-        'success' => true,
-        'message' => 'Application submitted successfully!',
-        'form_no' => $_POST['form_no'],
-        'student_id' => $studentId
-    ]);
-
+    // Return success response with PDF path
+   
+// Return success response
+echo json_encode([
+    'success' => true,
+    'message' => 'Application submitted successfully!',
+    'form_no' => $form_no,
+    'student_id' => $studentId
+]);
 } catch (Exception $e) {
     // Rollback transaction on error
     $conn->rollback();

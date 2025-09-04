@@ -135,7 +135,8 @@ document.addEventListener('DOMContentLoaded', function() {
       }
 
       const formData = new FormData(form);
-
+const formNo=document.getElementById('f-val').value;
+console.log(formNo);
       try {
         const response = await fetch('admission/submit.php', {
           method: 'POST',
@@ -146,13 +147,33 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
           const data = JSON.parse(result);
           if (data.success === true) {
-            Swal.fire("Success", "Form submitted successfully!", "success").then(() => {
-              // Optionally reset the form or redirect
-              document.getElementById('download').style.display = 'block';
-              form.reset();
-              progressBar.style.width = '0%';
-              progressBar.setAttribute('aria-valuenow', 0);
+            // Create download button HTML
+            const downloadBtn = `
+            <div class="text-center no-print" style="margin-top: 20px;">
+              <button onclick="redirect('${formNo}')" class="print-button">Click to Generate PDF</button>
+            </div>
+          `;
+            
+            // Show success message with download button
+            Swal.fire({
+              title: "Success!",
+              html: `
+                <div class="text-center">
+                  <i class="fas fa-check-circle text-success mb-3" style="font-size: 4rem;"></i>
+                  <h4>${data.message}</h4>
+                  <p class="mb-3">Your application has been submitted successfully!</p>
+                  ${downloadBtn}
+                </div>
+              `,
+              icon: "success",
+              showConfirmButton: false,
+              allowOutsideClick: false
             });
+            
+            // Reset form and progress
+            form.reset();
+            progressBar.style.width = '0%';
+            progressBar.setAttribute('aria-valuenow', 0);
           } else {
             throw new Error(data.message || "Unknown error occurred");
           }
@@ -240,3 +261,8 @@ document.addEventListener('DOMContentLoaded', function() {
     return firstInvalid;
   }
 });
+
+function redirect(formNo) {
+  // Pass form number in URL
+  window.location.href = "./pdf-template.php?form_no=" + encodeURIComponent(formNo);
+}

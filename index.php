@@ -14,7 +14,7 @@ $form_no = 'S.No.' . time(); ?>
 <div class="container p-0">
   <div class="form-container">
     <form id="admission_form" method="POST">
-          <input type="hidden" name="form_no" value="<?php echo $form_no; ?>">
+          <input type="hidden" name="form_no" id="f-val" value="<?php echo $form_no; ?>">
         
       <!-- Progress Indicator -->
       <div class="d-none d-md-block mb-4">

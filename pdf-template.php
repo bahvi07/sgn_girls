@@ -1,134 +1,84 @@
 <?php
-// This file will be included by test-pdf.php
-// $student variable is available here with all student data
+// Database connection
+require_once __DIR__ . '/includes/config.php';
+
+// Get form number from URL parameter
+$form_no = $_GET['form_no'] ?? '';
+
+if (empty($form_no)) {
+    die('Form number is required');
+}
+
+// Fetch student data from database with all related information
+$query = "
+    SELECT 
+        s.*,
+        fd.father_name_english, fd.father_name_hindi, fd.father_occupation,
+        fd.mother_name_english, fd.mother_name_hindi, fd.mother_occupation,
+        fd.guardian_name_english, fd.guardian_name_hindi, fd.guardian_occupation, fd.guardian_relation,
+        cd.permanent_address, cd.local_address, cd.pincode, cd.mobile_number,
+        cd.whatsapp_number, cd.email, cd.aadhar_number, cd.is_same_address,
+        au.current_status, au.status_changed_by, au.comments,
+        ou.admission_status, ou.eligible_for_admission, ou.scrutinizer_name,
+        ou.admission_date, ou.admission_incharge, ou.remarks
+    FROM students s
+    LEFT JOIN family_details fd ON s.student_id = fd.student_id
+    LEFT JOIN contact_details cd ON s.student_id = cd.student_id
+    LEFT JOIN application_status au ON s.student_id = au.student_id
+    LEFT JOIN office_use ou ON s.student_id = ou.student_id
+    WHERE s.form_no = ?
+";
+
+$stmt = $conn->prepare($query);
+if (!$stmt) {
+    die('Database error: ' . $conn->error);
+}
+
+$stmt->bind_param('s', $form_no);
+$stmt->execute();
+$result = $stmt->get_result();
+$student = $result->fetch_assoc();
+
+if (!$student) {
+    die('No student found with form number: ' . htmlspecialchars($form_no));
+}
+
+// Fetch educational qualifications
+$edu_query = "SELECT * FROM educational_qualifications WHERE student_id = ? ORDER BY year DESC";
+$edu_stmt = $conn->prepare($edu_query);
+$edu_stmt->bind_param('i', $student['student_id']);
+$edu_stmt->execute();
+$educations = $edu_stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+// Store educations in student array
+$student['educations'] = $educations;
+
+// Fetch documents
+$doc_query = "SELECT * FROM documents WHERE student_id = ?";
+$doc_stmt = $conn->prepare($doc_query);
+$doc_stmt->bind_param('i', $student['student_id']);
+$doc_stmt->execute();
+$documents = $doc_stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+// Store documents in student array
+$student['documents'] = $documents;
+
+// Set content type to HTML
+header('Content-Type: text/html; charset=UTF-8');
 ?>
 <!DOCTYPE html>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <style>
-        @page { 
-            margin: 20px; /* Increased from 8px */
-            size: A4;
-        }
-        @font-face {
-    font-family: "NotoSansDevanagari";
-    src: url("<?php echo __DIR__ . '/../assets/fonts/NotoSansDevanagari-Regular.ttf'; ?>") format("truetype");
-    font-weight: normal;
-    font-style: normal;
-}
-        * {
-            font-family: "NotoSansDevanagari", Arial, sans-serif !important;
-        }
-        body { 
-            font-family: 'Noto Sans Devanagari', Arial, sans-serif; 
-            font-size: 11px;
-            line-height: 1.5;
-            direction: ltr;
-            margin: 0;
-            padding: 0;
-            -webkit-font-smoothing: antialiased;
-            text-rendering: optimizeLegibility;
-            -webkit-font-feature-settings: "kern" 1;
-            font-feature-settings: "kern" 1;
-            -webkit-font-kerning: normal;
-            font-kerning: normal;
-            text-size-adjust: 100%;
-        }
-        
-        /* Ensure Devanagari text renders properly */
-        .hindi-text {
-            font-family: 'Noto Sans Devanagari', Arial, sans-serif;
-            font-weight: normal;
-            unicode-bidi: embed;
-        }
-        .header { 
-            text-align: center; 
-            margin-bottom: 10px;
-            position: relative;
-        }
-        .header h2 { 
-            font-size: 16px !important; 
-            margin: 0; 
-            color: #492c00;
-        }
-        .header h4 { 
-            font-size: 13px !important; 
-            margin: 6px 0 0 0; 
-            color: #492c00;
-        }
-        .header p  { 
-            font-size: 10px !important; 
-            margin: 3px 0; 
-        }
-        .section { 
-            margin-bottom: 12px;
-            page-break-inside: avoid;
-        }
-        .section-title { 
-            background-color: #f0f0f0; 
-            padding: 5px 8px;  /* Increased padding */
-            font-size: 12px;   /* Increased from 10px */
-            font-weight: bold;
-            margin: 12px 0 6px 0;
-            color: #492c00;
-            border-left: 3px solid #492c00;
-        }
-        .signature-line { 
-            border-bottom: 1px solid #000; 
-            display: inline-block;
-            min-width: 160px;
-            margin: 6px 0;
-        }
-        .text-center { text-align: center; }
-        .text-right { text-align: right; }
-        .mb-2 { margin-bottom: 0.5rem; }
-        .mt-2 { margin-top: 0.5rem; }
-        .declaration { 
-            font-size: 9.5px; 
-            line-height: 1.3;
-            text-align: justify;
-        }
-        .photo-box {
-            border: 1px solid #999;
-            width: 80px; /* Bigger photo */
-            height: 80px;
-            position: absolute;
-            right: 12px;
-            top: 12px;
-            padding: 2px;
-        }
-        .photo-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 10px;  /* Increased from 8.5px */
-            table-layout: fixed;
-        }
-        table, th, td {
-            border: 1px solid #ddd;
-        }
-        th, td {
-            padding: 4px 5px; /* Increased padding */
-            text-align: left;
-            word-wrap: break-word;
-            overflow-wrap: anywhere;
-        }
-        .section table, 
-        .section table td, 
-        .section table th {
-            font-size: 10px !important;
-        }
-        .no-break {
-            page-break-inside: avoid;
-        }
-    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="assets/js/submit.js"></script>
+    <link href="assets/css/pdf.css" rel="stylesheet">
 </head>
 <body>
+    <div id="pdfjs" class="pdf-container">
+        <!-- First Page -->
+        <div class="page">
     <!-- Header -->
     <div class="header">
         <h2>Sri Guru Nanak Khalsa Law (P.G.) College</h2>
@@ -281,7 +231,7 @@
     <!-- Educational Qualifications Section -->
     <div class="section">
         <div class="section-title">Educational Qualifications</div>
-        <?php if (!empty($student['qualifications'])): ?>
+        <?php if (!empty($student['educations'])): ?>
             <table>
                 <thead>
                     <tr style="background-color: #f8f9fa;">
@@ -295,15 +245,15 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($student['qualifications'] as $qual): ?>
+                    <?php foreach ($student['educations'] as $edu): ?>
                         <tr>
-                            <td><?= htmlspecialchars($qual['exam_type'] ?? '') ?></td>
-                            <td><?= htmlspecialchars($qual['roll_no'] ?? '') ?></td>
-                            <td><?= htmlspecialchars($qual['year'] ?? '') ?></td>
-                            <td><?= htmlspecialchars($qual['university'] ?? '') ?></td>
-                            <td style="text-align: right;"><?= htmlspecialchars($qual['max_marks'] ?? '') ?></td>
-                            <td style="text-align: right;"><?= htmlspecialchars($qual['marks_obtained'] ?? '') ?></td>
-                            <td style="text-align: right;"><?= htmlspecialchars($qual['percentage'] ?? '') ?>%</td>
+                            <td><?= htmlspecialchars($edu['exam_type'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($edu['roll_no'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($edu['year'] ?? '') ?></td>
+                            <td><?= htmlspecialchars($edu['university'] ?? '') ?></td>
+                            <td style="text-align: right;"><?= htmlspecialchars($edu['max_marks'] ?? '') ?></td>
+                            <td style="text-align: right;"><?= htmlspecialchars($edu['marks_obtained'] ?? '') ?></td>
+                            <td style="text-align: right;"><?= htmlspecialchars($edu['percentage'] ?? '') ?>%</td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
@@ -317,50 +267,63 @@
         <?php endif; ?>
     </div>
 
-    <!-- Document List Section -->
+    <div class="section">
+            <div class="section-title">Service Information</div>
+            <p><strong>Are you in service?:</strong> <?= htmlspecialchars($student['in_service'] ?? '') ?></p>
+        </div>
+        <div class="section">
+            <div class="section-title">Hobbies</div>
+            <table>
+                <tr>
+                    <td style="width: 20%;"><strong>Hobbies/Interests:</strong></td>
+                    <td colspan="2"><?= htmlspecialchars($student['hobbies_interests'] ?? '') ?></td>
+                    <td style="width: 20%;"><strong>Hobbies Details:</strong></td>
+                    <td colspan="2"><?= htmlspecialchars($student['hobbies_details'] ?? '') ?></td>
+                </tr>
+            </table>
+        </div>
+        </div> <!-- Close first page content -->
+        
+        <!-- Second Page -->
+        <div class="page" style="page-break-before: always;">
+        
+
+        <!-- Hobbies -->
+        
+ <!-- Document List Section -->
+    <?php if (!empty($student['documents'])): ?>
+        <div class="section">
+    <div class="section-title">Enclosures</div>
+    <table>
+        <thead>
+            <tr style="background-color: #f8f9fa;">
+                <th>Document Name</th>
+                <th>Document Name</th> <!-- Second column header added -->
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            $docs = $student['documents'];
+            $total = count($docs);
+            for ($i = 0; $i < $total; $i += 2): ?>
+                <tr>
+                    <td><?= htmlspecialchars($docs[$i]['document_name'] ?? '') ?></td>
+                    <td><?= isset($docs[$i + 1]) ? htmlspecialchars($docs[$i + 1]['document_name']) : '' ?></td>
+                </tr>
+            <?php endfor; ?>
+        </tbody>
+    </table>
+</div>
+
+    <?php endif; ?>
+
     <?php if (!empty($student['document_list'])): ?>
     <div class="section">
-        <div class="section-title">Required Documents</div>
+        <div class="section-title">Required Documents List</div>
         <div style="white-space: pre-line;"><?= nl2br(htmlspecialchars($student['document_list'])) ?></div>
     </div>
     <?php endif; ?>
-
-    <!-- Service Info -->
-    <div class="section">
-        <div class="section-title">Service Information</div>
-        <p><strong>Are you in service?:</strong> <?= htmlspecialchars($student['in_service'] ?? '') ?></p>
-    </div>
-
-    <!-- Hobbies -->
-    <div class="section">
-        <div class="section-title">Hobbies</div>
-        <table>
-            <tr>
-                <td style="width: 20%;"><strong>Hobbies/Interests:</strong></td>
-                <td colspan="2"><?= htmlspecialchars($student['hobbies_interests'] ?? '') ?></td>
-                <td style="width: 20%;"><strong>Hobbies Details:</strong></td>
-                <td colspan="2"><?= htmlspecialchars($student['hobbies_details'] ?? '') ?></td>
-            </tr>
-        </table>
-    </div>
- <!-- Enclosures (SECOND PAGE) -->
-    <div class="section">
-        <div class="section-title">Enclosures</div>
-        <table>
-            <tr>
-                <td><strong>Document 1:</strong></td>
-                <td><?= htmlspecialchars($student['enclosure1'] ?? '') ?></td>
-                <td><strong>Document 2:</strong></td>
-                <td><?= htmlspecialchars($student['enclosure2'] ?? '') ?></td>
-            </tr>
-            <tr>
-                <td><strong>Document 3:</strong></td>
-                <td><?= htmlspecialchars($student['enclosure3'] ?? '') ?></td>
-                <td><strong>Document 4:</strong></td>
-                <td><?= htmlspecialchars($student['enclosure4'] ?? '') ?></td>
-            </tr>
-        </table>
-    </div>
+   
     <!-- Declaration Section -->
     <div class="section">
         <div class="section-title">DECLARATION</div>
@@ -410,7 +373,143 @@
             </div>
         </div>
     </div>
+           
+        </div> <!-- Close second page -->
+    </div> <!-- Close pdfjs container -->
+    
+    <style>
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            .page {
+                margin: 0;
+                padding: 15mm;
+                border: none;
+            }
+        }
+    </style>
+</div>
+<button onclick="HTMLTOPDF()">clik me</button>
+<script>
+function HTMLToPDF() {
+    try {
+        const { jsPDF } = window.jspdf;
+        const pdfjs = document.getElementById("pdfjs");
+        if (!pdfjs) {
+            throw new Error('Could not find the PDF container');
+        }
 
-   
+        // Show loading indicator
+        const button = document.querySelector('button');
+        const originalText = button.textContent;
+        button.disabled = true;
+        button.textContent = 'Generating PDF...';
+
+        // Create a new PDF with A4 dimensions (210mm x 297mm)
+        const pdf = new jsPDF({
+            orientation: 'portrait',
+            unit: 'mm',
+            format: 'a4'
+        });
+
+        // Set document properties
+        pdf.setProperties({
+            title: 'Student Application Form',
+            subject: 'Admission Form',
+            author: 'SGN Law College',
+            creator: 'SGN Law College'
+        });
+
+        // Get all pages
+        const pages = document.querySelectorAll('.page');
+        let currentPage = 0;
+
+        // Function to process each page
+        const processPage = (index) => {
+            return new Promise((resolve, reject) => {
+                const page = pages[index];
+                const options = {
+                    scale: 2,
+                    useCORS: true,
+                    logging: true,
+                    allowTaint: true,
+                    scrollX: 0,
+                    scrollY: 0,
+                    windowWidth: page.scrollWidth,
+                    windowHeight: page.scrollHeight
+                };
+
+                html2canvas(page, options).then(canvas => {
+                    try {
+                        const imgData = canvas.toDataURL('image/png');
+                        const imgWidth = 190; // A4 width - margins (210 - 20)
+                        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+                        // Add new page if not the first page
+                        if (index > 0) {
+                            pdf.addPage();
+                        }
+
+                        // Add image to PDF
+                        pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
+
+                        // Add page number
+                        const pageNumber = index + 1;
+                        pdf.setPage(pageNumber);
+                        pdf.setFontSize(8);
+                        pdf.text('Page ' + pageNumber + ' of ' + pages.length, 180, 287);
+
+                        resolve();
+                    } catch (e) {
+                        reject(e);
+                    }
+                }).catch(error => {
+                    console.error('Error in html2canvas for page ' + (index + 1) + ':', error);
+                    reject(error);
+                });
+            });
+        };
+
+        // Process all pages sequentially
+        const processAllPages = async () => {
+            try {
+                for (let i = 0; i < pages.length; i++) {
+                    await processPage(i);
+                }
+                
+                // Save the PDF after all pages are processed
+                pdf.save('Admission_Form_' + new Date().toISOString().slice(0, 10) + '.pdf');
+                
+                // Reset button state
+                button.disabled = false;
+                button.textContent = originalText;
+            } catch (error) {
+                console.error('Error processing pages:', error);
+                alert('Error generating PDF: ' + error.message);
+                button.disabled = false;
+                button.textContent = originalText;
+            }
+        };
+
+        // Start processing pages
+        processAllPages();
+
+    } catch (error) {
+        console.error('Fatal error in HTMLToPDF:', error);
+        alert('Failed to generate PDF: ' + error.message);
+        const button = document.querySelector('button');
+        if (button) {
+            button.disabled = false;
+            button.textContent = 'Generate PDF';
+        }
+    }
+}
+</script>
+</script>
 </body>
 </html>
