@@ -67,8 +67,12 @@ $student['documents'] = $documents;
 header('Content-Type: text/html; charset=UTF-8');
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <!-- SweetAlert2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -282,13 +286,7 @@ header('Content-Type: text/html; charset=UTF-8');
                 </tr>
             </table>
         </div>
-        </div> <!-- Close first page content -->
-        
-        <!-- Second Page -->
-        <div class="page" style="page-break-before: always;">
-        
-
-        <!-- Hobbies -->
+                <!-- Hobbies -->
         
  <!-- Document List Section -->
     <?php if (!empty($student['documents'])): ?>
@@ -323,6 +321,13 @@ header('Content-Type: text/html; charset=UTF-8');
         <div style="white-space: pre-line;"><?= nl2br(htmlspecialchars($student['document_list'])) ?></div>
     </div>
     <?php endif; ?>
+        </div> <!-- Close first page content -->
+        
+        <!-- Second Page -->
+        <div class="page" style="page-break-before: always;">
+        
+
+
    
     <!-- Declaration Section -->
     <div class="section">
@@ -404,7 +409,11 @@ header('Content-Type: text/html; charset=UTF-8');
 </div>
 <button onclick="HTMLToPDF()">Click to Download PDF</button>
 <script>
+// Make Swal available globally
+const Swal = window.Swal;
+
 function HTMLToPDF() {
+    
     try {
         const { jsPDF } = window.jspdf;
         const pdfjs = document.getElementById("pdfjs");
@@ -469,7 +478,7 @@ function HTMLToPDF() {
                         // Add page number
                         const pageNumber = index + 1;
                         pdf.setPage(pageNumber);
-                        pdf.setFontSize(8);
+                        pdf.setFontSize(9);
                         pdf.text('Page ' + pageNumber + ' of ' + pages.length, 180, 287);
 
                         resolve();
@@ -491,11 +500,32 @@ function HTMLToPDF() {
                 }
                 
                 // Save the PDF after all pages are processed
-                pdf.save('Admission_Form_' + new Date().toISOString().slice(0, 10) + '.pdf');
-                
-                // Reset button state
+                pdf.save('admission_form_' + new Date().getTime() + '.pdf');
+        
+                // Re-enable button
                 button.disabled = false;
                 button.textContent = originalText;
+        
+                // Show submission instructions
+                Swal.fire({
+                    title: 'Download Complete!',
+                    html: `
+                        <div class="text-center">
+                            <i class="fas fa-check-circle text-success mb-3" style="font-size: 4rem;"></i>
+                            <h4>Next Steps:</h4>
+                            <ol class="text-left">
+                                <li>Print the downloaded PDF</li>
+                                <li>Sign the form where required</li>
+                                <li>Submit the signed copy to the college admission office</li>
+                            </ol>
+                            <p class="mt-3">For any queries, please contact the admission office.</p>
+                        </div>
+                    `,
+                    icon: 'success',
+                    confirmButtonText: 'Got it!',
+                    confirmButtonColor: '#28a745',
+                    allowOutsideClick: false
+                });
             } catch (error) {
                 console.error('Error processing pages:', error);
                 alert('Error generating PDF: ' + error.message);
