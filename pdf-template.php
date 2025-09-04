@@ -392,9 +392,17 @@ header('Content-Type: text/html; charset=UTF-8');
                 border: none;
             }
         }
+        button{
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
     </style>
 </div>
-<button onclick="HTMLTOPDF()">clik me</button>
+<button onclick="HTMLToPDF()">Click to Download PDF</button>
 <script>
 function HTMLToPDF() {
     try {

@@ -149,9 +149,15 @@ console.log(formNo);
           if (data.success === true) {
             // Create download button HTML
             const downloadBtn = `
-            <div class="text-center no-print" style="margin-top: 20px;">
-              <button onclick="redirect('${formNo}')" class="print-button">Click to Generate PDF</button>
-            </div>
+<div class="text-center no-print" style="margin-top: 20px;">
+  <button 
+    onclick="redirect('${formNo}')" 
+    style="background-color: #007bff; color: #fff; border: none; padding: 8px 16px; font-size: 14px; border-radius: 4px; cursor: pointer;"
+  >
+    Click to Generate PDF
+  </button>
+</div>
+
           `;
             
             // Show success message with download button

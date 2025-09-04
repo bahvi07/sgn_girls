@@ -271,7 +271,93 @@ try {
     // 10. Commit transaction
     $conn->commit();
     
-    // Return success response with PDF path
+    //  Sending mail to clg with form no and student basic details 
+
+    $mail = new PHPMailer(true);
+    try {
+        $mail->isSMTP();
+        $mail->Host = 'smtp.gmail.com';
+        $mail->SMTPAuth = true;
+        $mail->Username = 'help40617@gmail.com';
+        $mail->Password = 'udqrtfzamiluzkpz';
+        $mail->SMTPSecure = 'tls';
+        $mail->Port = 587;
+
+        $mail->setFrom('help40617@gmail.com', 'SGN Law College');
+        $mail->addAddress('help40617@gmail.com', 'Admission Office');
+        
+        // Add student's email if available
+        $studentEmail = $_POST['email'] ?? '';
+        if (!empty($studentEmail)) {
+            $mail->addAddress($studentEmail);
+        }
+
+        $mail->isHTML(true);
+        $mail->Subject = "Admission Form Submitted - {$form_no}";
+        
+        // Prepare student details from form data
+        $studentName = htmlspecialchars(trim($_POST['applicant_name_english'] ?? 'N/A'));
+        $fatherName = htmlspecialchars(trim($_POST['father_name_english'] ?? 'N/A'));
+        $motherName = htmlspecialchars(trim($_POST['mother_name_english'] ?? 'N/A'));
+        $course = htmlspecialchars($_POST['class_sought'] ?? 'N/A');
+        $mobile = htmlspecialchars($_POST['mobile_number'] ?? 'N/A');
+        $email = htmlspecialchars($studentEmail ?: 'Not provided');
+        $gender = htmlspecialchars($_POST['gender'] ?? 'Not specified');
+        $category = htmlspecialchars($_POST['category'] ?? 'Not specified');
+        $dob = !empty($_POST['date_of_birth']) ? date('d/m/Y', strtotime($_POST['date_of_birth'])) : 'Not specified';
+        $submissionDate = date('d/m/Y h:i A');
+        
+        // HTML Email Body
+        $mail->Body = "
+            <h2>New Admission Form Submitted</h2>
+            <p><strong>Form Number:</strong> {$form_no}</p>
+            <p><strong>Submission Date:</strong> {$submissionDate}</p>
+            
+            <h3>Student Details:</h3>
+            <p><strong>Form Number:</strong> {$form_no}</p>
+            <p><strong>Full Name:</strong> {$studentName}</p>
+            <p><strong>Father's Name:</strong> {$fatherName}</p>
+            <p><strong>Mother's Name:</strong> {$motherName}</p>
+            <p><strong>Date of Birth:</strong> {$dob}</p>
+            <p><strong>Gender:</strong> {$gender}</p>
+            <p><strong>Category:</strong> {$category}</p>
+            <p><strong>Course Applied:</strong> {$course}</p>
+            <p><strong>Contact:</strong> {$mobile}</p>
+            <p><strong>Email:</strong> {$email}</p>
+            <p>This is an automated confirmation. Please contact for more details.</p>
+            
+            <p>Best regards,<br>
+            Admission Department<br>
+            SGN Law College</p>
+        ";
+        
+        // Plain text version for non-HTML email clients
+        $mail->AltBody = "
+            New Admission Form Submitted
+            ---------------------------
+            
+            Form Number: {$form_no}
+            Submission Date: {$submissionDate}
+            
+            Student Details:
+            - Full Name: {$studentName}
+            - Father's Name: {$fatherName}
+            - Course Applied: {$course}
+            - Mobile: {$mobile}
+            - Email: {$email}
+            
+            This is an automated confirmation. Please log in to the admin panel for more details.
+            
+            Best regards,
+            Admission Department
+            SGN Law College
+        ";
+
+        $mail->send();
+        $emailMsg = "Email sent successfully!";
+    } catch (Exception $e) {
+        $emailMsg = "Email failed: " . $mail->ErrorInfo;
+    }
    
 // Return success response
 echo json_encode([
